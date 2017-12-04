@@ -535,7 +535,7 @@ namespace Tests
         public void CanCreateTicketWithDueDate()
         {
             //31 December 2020 2AM
-            var dueAt = DateTimeOffset.Parse("12/31/2020 07:00:00 -05:00");
+            var dueAt = DateTimeOffset.Parse("12/31/2020 07:00:00 -05:00", new CultureInfo("en-us"));
 
             var ticket = new Ticket()
             {
