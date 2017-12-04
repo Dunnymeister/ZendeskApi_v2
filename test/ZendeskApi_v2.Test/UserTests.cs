@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Constants;
 using ZendeskApi_v2.Models.Users;
@@ -12,48 +12,47 @@ using System.IO;
 
 namespace Tests
 {
-    [TestFixture]
     [Category("Users")]
     public class UserTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         public void CanGetUsers()
         {
             var res = api.Users.GetAllUsers();
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetAgents()
         {
             var res = api.Users.GetAllAgents();
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetAdmins()
         {
             var res = api.Users.GetAllAdmins();
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetEndUsers()
         {
             var res = api.Users.GetAllEndUsers();
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetAllUsersInRoles()
         {
             var res = api.Users.GetAllUsersInRoles(agents: true, admins: true);
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetUserByCustomField()
         {
             var res = api.Users.SearchByCustomUserField(Settings.FieldKey, Settings.FieldValue);
@@ -63,7 +62,7 @@ namespace Tests
             Assert.AreEqual(1158278453, user.Id);
         }
 
-        [Test]
+        [Fact]
         public void CannotGetUserByCustomField()
         {
             var res = api.Users.SearchByCustomUserField(Settings.FieldKey, Settings.BadFieldValue);
@@ -72,28 +71,28 @@ namespace Tests
             Assert.Null(res.Users.FirstOrDefault());
         }
 
-        [Test]
+        [Fact]
         public void CanGetUser()
         {
             var res = api.Users.GetUser(Settings.UserId);
             Assert.True(res.User.Id == Settings.UserId);
         }
 
-        [Test]
+        [Fact]
         public void CanGetUsersInGroup()
         {
             var res = api.Users.GetUsersInGroup(Settings.GroupId);
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetUsersInOrg()
         {
             var res = api.Users.GetUsersInOrganization(Settings.OrganizationId);
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateSuspendAndDeleteUser()
         {
             var list = api.Users.GetAllUsers();
@@ -140,7 +139,7 @@ namespace Tests
             //Assert.AreEqual(res1.User.RemotePhotoUrl, res2.User.RemotePhotoUrl);
         }
 
-        [Test]
+        [Fact]
         public void CanFindUser()
         {
             //var res1 = api.Users.SearchByEmail(Settings.Email);
@@ -148,7 +147,7 @@ namespace Tests
             Assert.True(res1.Users.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanFindUserByPhone()
         {
             var res1 = api.Users.SearchByPhone(Settings.Phone);
@@ -157,7 +156,7 @@ namespace Tests
             Assert.AreEqual("0897c9c1f80646118a8194c942aa84cf 162a3d865f194ef8b7a2ad3525ea6d7c", res1.Users.First().Name);
         }
 
-        [Test]
+        [Fact]
         public void CanFindUserByFormattedPhone()
         {
             var res1 = api.Users.SearchByPhone(Settings.FormattedPhone);
@@ -166,7 +165,7 @@ namespace Tests
             Assert.AreEqual("dc4d7cf57d0c435cbbb91b1d4be952fe 504b509b0b1e48dda2c8471a88f068a5", res1.Users.First().Name);
         }
 
-        [Test]
+        [Fact]
         public void CanFindUserByPhoneAsync()
         {
             var res1 = api.Users.SearchByPhoneAsync(Settings.Phone).Result;
@@ -175,28 +174,28 @@ namespace Tests
             Assert.AreEqual("0897c9c1f80646118a8194c942aa84cf 162a3d865f194ef8b7a2ad3525ea6d7c", res1.Users.First().Name);
         }
 
-        [Test]
+        [Fact]
         public void CannotFindUserByPhone()
         {
             var res1 = api.Users.SearchByPhone(Settings.BadPhone);
             Assert.True(res1.Users.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void CannotFindUserByPhoneAsync()
         {
             var res1 = api.Users.SearchByPhoneAsync(Settings.BadPhone).Result;
             Assert.True(res1.Users.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetCurrentUser()
         {
             var res1 = api.Users.GetCurrentUser();
             Assert.True(res1.User.Id > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetUserIdentities()
         {
             var res = api.Users.GetCurrentUser();
@@ -208,7 +207,7 @@ namespace Tests
             Assert.Greater(res2.Identity.Id, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteIdentities()
         {
             var user = new User()
@@ -244,7 +243,7 @@ namespace Tests
             Assert.True(api.Users.DeleteUser(userId));
         }
 
-        [Test]
+        [Fact]
         public async Task CanMergeUsersAsync()
         {
             var user1 = new User
@@ -275,7 +274,7 @@ namespace Tests
             api.Users.DeleteUser(resultUser2.User.Id.Value);
         }
 
-        [Test]
+        [Fact]
         public void CanGetMultipleUsers()
         {
             var userList = api.Users.GetAllUsers(10, 1).Users.Select(u => u.Id.Value).ToList();
@@ -285,7 +284,7 @@ namespace Tests
             Assert.IsTrue((result.Organizations != null && result.Organizations.Any()) || (result.Identities != null && result.Identities.Any()));
         }
 
-        [Test]
+        [Fact]
         public void CanGetMultipleUsersAsync()
         {
             var userList = api.Users.GetAllUsersAsync(10, 1).Result.Users.Select(u => u.Id.Value).ToList();
@@ -294,7 +293,7 @@ namespace Tests
             Assert.IsTrue((result.Organizations != null && result.Organizations.Any()) || (result.Identities != null && result.Identities.Any()));
         }
 
-        [Test]
+        [Fact]
         public void CanSetUserPhoto()
         {
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "gracehoppertocat3.jpg");
@@ -311,7 +310,7 @@ namespace Tests
             Assert.That(user.User.Photo.Size, Is.Not.Zero);
         }
 
-        [Test]
+        [Fact]
         public async Task CanSetUserPhotoAsync()
         {
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "gracehoppertocat3.jpg");
@@ -327,7 +326,7 @@ namespace Tests
             Assert.That(user.User.Photo.Size, Is.Not.Zero);
         }
 
-        [Test]
+        [Fact]
         public void CanGetUserRelatedInformation()
         {
             //Arrange
@@ -341,7 +340,7 @@ namespace Tests
             Assert.IsInstanceOf(typeof(IndividualUserRelatedInformationResponse), result);
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetUserRelatedInformationAsync()
         {
             //Arrange
@@ -355,7 +354,7 @@ namespace Tests
             Assert.IsInstanceOf(typeof(IndividualUserRelatedInformationResponse), result);
         }
 
-        [Test]
+        [Fact]
         public async Task CanCreateUpdateAndDeleteIdentitiesAsync()
         {
             var user = new User()

@@ -1,5 +1,5 @@
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Constants;
 using ZendeskApi_v2.Models.Users;
@@ -9,7 +9,6 @@ using ZendeskApi_v2.Models.Search;
 
 namespace Tests
 {
-    [TestFixture]
     public class GroupTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
@@ -29,21 +28,21 @@ namespace Tests
 
 
 
-        [Test]
+        [Fact]
         public void CanGetGroups()
         {
             var res = api.Groups.GetGroups();
             Assert.Greater(res.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetAssignableGroups()
         {
             var res = api.Groups.GetAssignableGroups();
             Assert.Greater(res.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetGroup()
         {
             var res = api.Groups.GetGroups();
@@ -52,7 +51,7 @@ namespace Tests
             Assert.AreEqual(res1.Group.Id.Value, res.Groups[0].Id.Value);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteGroup()
         {
             var res = api.Groups.CreateGroup("Test Group");
@@ -65,7 +64,7 @@ namespace Tests
             Assert.True(api.Groups.DeleteGroup(res.Group.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanGetGroupMemberships()
         {
             var res = api.Groups.GetGroupMemberships();
@@ -79,7 +78,7 @@ namespace Tests
             Assert.Greater(res2.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetAssignableGroupMemberships()
         {
             var res = api.Groups.GetAssignableGroupMemberships();
@@ -90,7 +89,7 @@ namespace Tests
             Assert.Greater(res1.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetIndividualGroupMemberships()
         {
             var res = api.Groups.GetGroupMemberships();
@@ -102,7 +101,7 @@ namespace Tests
             Assert.AreEqual(res2.GroupMembership.UserId, res1.GroupMembership.UserId);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteMembership()
         {
             var group = api.Groups.CreateGroup("Test Group 2").Group;

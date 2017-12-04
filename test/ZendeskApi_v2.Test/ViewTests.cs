@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.Constants;
@@ -16,33 +16,32 @@ using ZendeskApi_v2.Models.Views.Executed;
 
 namespace Tests
 {
-    [TestFixture]
     public class ViewTests
     {
         ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         public void CanGetViews()
         {
             var views = api.Views.GetAllViews();
             Assert.True(views.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetActiveViews()
         {
             var views = api.Views.GetActiveViews();
             Assert.True(views.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetCompactViews()
         {
             var views = api.Views.GetCompactViews();
             Assert.True(views.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetViewById()
         {
             var views = api.Views.GetAllViews();
@@ -50,7 +49,7 @@ namespace Tests
             Assert.True(view.View.Id > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanExecuteViews()
         {
             var views = api.Views.GetAllViews();
@@ -63,7 +62,7 @@ namespace Tests
             Assert.Greater(res.Columns.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanExecutePagedView()
         {
             var res = api.Views.ExecuteView(Settings.ViewId, "", true, 25, 2);
@@ -80,7 +79,7 @@ namespace Tests
             Assert.AreEqual("3", nextPage);
         }
 
-        [Test]
+        [Fact]
         public void CanPreviewViews()
         {
             var preview = new PreviewViewRequest()
@@ -97,7 +96,7 @@ namespace Tests
             Assert.Greater(previewRes.Columns.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetViewCounts()
         {
             var views = api.Views.GetAllViews();
@@ -107,7 +106,7 @@ namespace Tests
             Assert.True(views.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetViewCount()
         {
             var views = api.Views.GetAllViews();

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 
 namespace Tests
 {
-    [TestFixture]
     [Category("Voice")]
     public class VoiceTests
     {
@@ -17,7 +16,7 @@ namespace Tests
         private long ticketid;
         private long userid;
 
-        [Test]
+        [Fact]
         public void OpenTicketForAgent()
         {
             agentid = Settings.UserId;
@@ -27,7 +26,7 @@ namespace Tests
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [Fact]
         public void OpenTicketTabForAgentAsync()
         {
             agentid = Settings.UserId;
@@ -37,7 +36,7 @@ namespace Tests
             Assert.IsTrue(result.Result);
         }
 
-        [Test]
+        [Fact]
         public void OpenUserProfileInAgentBrowser()
         {
             agentid = Settings.UserId;
@@ -47,7 +46,7 @@ namespace Tests
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [Fact]
         public void OpenUserProfileInAgentBrowserAsync()
         {
             agentid = Settings.UserId;
@@ -57,7 +56,7 @@ namespace Tests
             Assert.IsTrue(result.Result);
         }
 
-        [Test]
+        [Fact]
         public void GetAllAgentAvailability()
         {
             var res = api.Voice.GetVoiceAgentActivity();
@@ -67,7 +66,7 @@ namespace Tests
             Assert.AreEqual(2110053086, agent.AgentId); 
         }
 
-        [Test]
+        [Fact]
         public void GetAllAgentAvailabilityAsync()
         {
             var res = api.Voice.GetVoiceAgentActivityAsync();
@@ -77,7 +76,7 @@ namespace Tests
             Assert.AreEqual(2110053086, agent.AgentId); 
         }
 
-        [Test]
+        [Fact]
         public void GetHistoricalQueueActivity()
         {
             var res = api.Voice.GetHistoricalQueueActivity();
@@ -85,7 +84,7 @@ namespace Tests
             Assert.NotNull(res);
         }
 
-        [Test]
+        [Fact]
         public void GetHistoricalQueueActivityAsync()
         {
             var res = api.Voice.GetHistoricalQueueActivityAsync();

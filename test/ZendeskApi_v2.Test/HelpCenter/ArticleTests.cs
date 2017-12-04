@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Articles;
 using ZendeskApi_v2.Models.Sections;
@@ -13,7 +13,6 @@ using ZendeskApi_v2.Requests.HelpCenter;
 
 namespace Tests.HelpCenter
 {
-    [TestFixture]
     [Category("HelpCenter")]
     [Parallelizable(ParallelScope.None)]
     public class ArticleTests
@@ -21,14 +20,14 @@ namespace Tests.HelpCenter
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
         private long _articleIdWithComments = 204838115; //https://csharpapi.zendesk.com/hc/en-us/articles/204838115-Thing-4?page=1#comment_200486479
 
-        [Test]
+        [Fact]
         public void CanGetSingleArticle()
         {
             var res = api.HelpCenter.Articles.GetArticle(_articleIdWithComments);
             Assert.IsNotNull(res.Article);
         }
 
-        [Test]
+        [Fact]
         public void CanGetSingleArticleWithTranslations()
         {
             var res = api.HelpCenter.Articles.GetArticle(_articleIdWithComments, ArticleSideLoadOptionsEnum.Translations);
@@ -36,7 +35,7 @@ namespace Tests.HelpCenter
             Assert.Greater(res.Article.Translations.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticles()
         {
             var res = api.HelpCenter.Articles.GetArticles();
@@ -57,7 +56,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(res.Users.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticleSideloadedWithUsers()
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Users);
@@ -66,7 +65,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(res.Users.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticleSideloadedWithSections()
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Sections);
@@ -75,7 +74,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(res.Sections.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticleSideloadedWithCategories()
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Categories);
@@ -84,7 +83,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(res.Categories.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticleSideloadedWithTranslations()
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Categories | ArticleSideLoadOptionsEnum.Sections | ArticleSideLoadOptionsEnum.Users | ArticleSideLoadOptionsEnum.Translations);
@@ -94,7 +93,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(res.Sections[0].Translations.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticleByCategoryWithSideloadedSections()
         {
             var firstCategory = api.HelpCenter.Categories.GetCategories().Categories[0];
@@ -103,7 +102,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(res.Sections.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticlesSorted()
         {
             var articlesAscending = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title });
@@ -112,7 +111,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
         }
 
-        [Test]
+        [Fact]
         public void CanGetArticlesSortedInASection()
         {
             var section = api.HelpCenter.Sections.GetSectionById(201010935).Section;
@@ -128,7 +127,7 @@ namespace Tests.HelpCenter
         /// <summary>
         /// This throws a 500 error, no idea why, ticket into Zendesk
         /// </summary>
-        [Test]
+        [Fact]
         public void CanGetArticlesSortedInACategory()
         {
             var category = api.HelpCenter.Categories.GetCategories().Categories[0];
@@ -138,7 +137,7 @@ namespace Tests.HelpCenter
             Assert.IsTrue(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteArticles()
         {
             var resSections = api.HelpCenter.Sections.GetSections();
@@ -157,7 +156,7 @@ namespace Tests.HelpCenter
             Assert.True(api.HelpCenter.Articles.DeleteArticle(res.Article.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanGetSingleArticleWithTranslationsAsync()
         {
             var res = api.HelpCenter.Articles.GetArticleAsync(_articleIdWithComments, ArticleSideLoadOptionsEnum.Translations).Result;
@@ -165,7 +164,7 @@ namespace Tests.HelpCenter
             Assert.Greater(res.Article.Translations.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetArticlesAsync()
         {
             var res = await api.HelpCenter.Articles.GetArticlesAsync();
@@ -176,7 +175,7 @@ namespace Tests.HelpCenter
             Assert.That(res1.Articles[0].SectionId, Is.EqualTo(202119686));
         }
 
-        [Test]
+        [Fact]
         public async Task CanCreateUpdateAndDeleteArticlesAsync()
         {
             var resSections = await api.HelpCenter.Sections.GetSectionsAsync();
@@ -196,7 +195,7 @@ namespace Tests.HelpCenter
             Assert.True(await api.HelpCenter.Articles.DeleteArticleAsync(res.Article.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetSecondPageUisngGetByPageUrl()
         {
             var pageSize = 3;
@@ -208,7 +207,7 @@ namespace Tests.HelpCenter
             Assert.That(resp.Page, Is.EqualTo(2));
         }
 
-        [Test]
+        [Fact]
         public async Task CanSearchForArticlesAsync()
         {
             var resp = await api.HelpCenter.Articles.SearchArticlesForAsync("Test", createdBefore: DateTime.Now);
@@ -216,7 +215,7 @@ namespace Tests.HelpCenter
             Assert.That(resp.Count, Is.GreaterThan(0));
         }
 
-        [Test]
+        [Fact]
         public void CanSearchForArticles()
         {
             var resp = api.HelpCenter.Articles.SearchArticlesFor("Test", createdBefore: DateTime.Now);

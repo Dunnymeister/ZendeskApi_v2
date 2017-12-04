@@ -1,4 +1,4 @@
-using NUnit.Framework;
+using Xunit;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,6 @@ using ZendeskApi_v2.Models.Triggers;
 
 namespace Tests
 {
-    [TestFixture]
     public class TriggerTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
@@ -25,7 +24,7 @@ namespace Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanGetTriggers()
         {
             var res = api.Triggers.GetTriggers();
@@ -35,7 +34,7 @@ namespace Tests
             Assert.AreEqual(ind.Trigger.Id, res.Triggers[0].Id);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteTriggers()
         {
             var trigger = new Trigger()
@@ -61,7 +60,7 @@ namespace Tests
             Assert.True(api.Triggers.DeleteTrigger(res.Trigger.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanReorderTriggers()
         {
             var res = api.Triggers.GetActiveTriggers().Triggers;

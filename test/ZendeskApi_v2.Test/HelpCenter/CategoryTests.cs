@@ -1,16 +1,15 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.HelpCenter.Categories;
 
 namespace Tests.HelpCenter
 {
-    [TestFixture]
     [Category("HelpCenter")]
     public class CategoryTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         //[Timeout(3000)]
         public void CanGetCategories()
         {
@@ -21,7 +20,7 @@ namespace Tests.HelpCenter
             Assert.AreEqual(res1.Category.Id, res.Categories[0].Id.Value);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteCategories()
         {
             var res = api.HelpCenter.Categories.CreateCategory(new Category()

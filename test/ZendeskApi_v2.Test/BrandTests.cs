@@ -1,4 +1,4 @@
-using NUnit.Framework;
+using Xunit;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,6 @@ using System;
 
 namespace Tests
 {
-    [TestFixture]
     public class BrandTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
@@ -26,7 +25,7 @@ namespace Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanGetBrands()
         {
             var res = api.Brands.GetBrands();
@@ -36,7 +35,7 @@ namespace Tests
             Assert.AreEqual(ind.Brand.Id, res.Brands[0].Id);            
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteTriggers()
         {
             var brand = new Brand()

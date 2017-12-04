@@ -1,15 +1,14 @@
 ﻿using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2.Models.Tickets;
 
 namespace Tests.Models.Tickets
 {
-    [TestFixture]
     public class FromTests
     {
         private const string AllFieldsJson = "{\"address\":\"Test\",\"name\":\"Caller +49 89 555 666777\",\"formatted_phone\":\"+49 89 555 666777\",\"phone\":\"+4989555666777\"}";
 
-        [Test]
+        [Fact]
         public void DeserializeAllFieldsTest()
         {
             var from = JsonConvert.DeserializeObject<From>(AllFieldsJson);
@@ -21,7 +20,7 @@ namespace Tests.Models.Tickets
             Assert.AreEqual("Test", from.Address);
         }
 
-        [Test]
+        [Fact]
         public void SerializeAllFieldsTest()
         {
             var from = new From

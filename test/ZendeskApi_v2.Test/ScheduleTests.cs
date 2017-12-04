@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,6 @@ using ZendeskApi_v2.Models.Schedules;
 
 namespace Tests
 {
-    [TestFixture]
     public class ScheduleTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
@@ -44,7 +43,7 @@ namespace Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanGetSchedules()
         {
             var res = api.Schedules.GetAllSchedules();
@@ -54,7 +53,7 @@ namespace Tests
             Assert.AreEqual(org.Schedule.Id, res.Schedules[0].Id);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteSchedule()
         {
             var res = api.Schedules.CreateSchedule(new Schedule()
@@ -72,7 +71,7 @@ namespace Tests
             Assert.True(api.Schedules.DeleteSchedule(res.Schedule.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanUpdateIntervals()
         {
             var res = api.Schedules.CreateSchedule(new Schedule()
@@ -96,7 +95,7 @@ namespace Tests
             Assert.True(api.Schedules.DeleteSchedule(res.Schedule.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteHoliday()
         {
             var res = api.Schedules.CreateSchedule(new Schedule()

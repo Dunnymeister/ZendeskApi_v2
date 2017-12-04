@@ -1,21 +1,20 @@
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 
 namespace Tests
 {
-    [TestFixture]
     public class AccountsAndActivityTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         public void CanGetSettings()
         {
             var res = api.AccountsAndActivity.GetSettings();
             Assert.IsNotEmpty(res.Settings.Branding.HeaderColor);
         }
 
-        [Test]
+        [Fact]
         public void CanGetActivities()
         {
             //the api returns empty objects and I'm not sure how to get it to populate

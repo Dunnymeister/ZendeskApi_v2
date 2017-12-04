@@ -4,16 +4,15 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 
 using ZendeskApi_v2.Models.Tickets;
 
 namespace Tests
 {
-    [TestFixture]
     public class CoreTests
     {
-        [Test]
+        [Fact]
         public void CreatesUrisCorrectly()
         {
             var res = new ZendeskApi_v2.ZendeskApi("https://csharpapi.zendesk.com/api/v2", Settings.AdminEmail, Settings.AdminPassword);
@@ -32,7 +31,7 @@ namespace Tests
             Assert.AreEqual(Settings.Site, api4.ZendeskUrl);
         }
 
-        [Test]
+        [Fact]
         public void CanUseTokenAccess()
         {
             var api = new ZendeskApi_v2.ZendeskApi("https://csharpapi.zendesk.com/api/v2", Settings.AdminEmail, "", Settings.ApiToken, "en-us", null);
@@ -43,7 +42,7 @@ namespace Tests
             Assert.AreEqual(ticket.Id, id);
         }
 
-        [Test]
+        [Fact]
         public void AsyncGivesCorrectException()
         {
             var api = new ZendeskApi_v2.ZendeskApi(
@@ -61,7 +60,7 @@ namespace Tests
 
         }
 
-        [Test]
+        [Fact]
         public void GivesCorrectException()
         {
             var api = new ZendeskApi_v2.ZendeskApi(

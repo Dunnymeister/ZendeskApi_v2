@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Shared;
 using System.Threading.Tasks;
@@ -12,12 +12,11 @@ using Newtonsoft.Json;
 
 namespace Tests
 {
-    [TestFixture]
     public class AttachmentTests
     {
         ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         public void CanUploadAttachments()
         {
             var res = api.Attachments.UploadAttachment(new ZenFile()
@@ -30,7 +29,7 @@ namespace Tests
         }
 
 
-        [Test]
+        [Fact]
         public async Task CanDowloadAttachment()
         {
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "testupload.txt");

@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2.Models.Requests;
 
 namespace Tests.Models.Requests
 {
-    [TestFixture]
     public class RequestTests
     {
         private const string BodyJsonFormat = "{{\"request\":{0}}}";
@@ -40,7 +39,7 @@ namespace Tests.Models.Requests
         private static readonly string OpenRequestJson = string.Format(RequestJsonFormat, Url, Id, OpenStatus, Subject, Description, OrganizationId, ViaJson, CustomFieldsJson, RequesterId, OpenCanBeSolvedByMe.ToString().ToLower());
         private static readonly string SolvedRequestJson = string.Format(RequestJsonFormat, Url, Id, SolvedStatus, Subject, Description, OrganizationId, ViaJson, CustomFieldsJson, RequesterId, SolvedCanBeSolvedByMe.ToString().ToLower());
 
-        [Test]
+        [Fact]
         public void TestDeserialize()
         {
             var openRequest = JsonConvert.DeserializeObject<Request>(OpenRequestJson);

@@ -1,14 +1,13 @@
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 
 namespace Tests
 {
-    [TestFixture]
     public class TagTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         public void CanGetTags()
         {
             var res = api.Tags.GetTags();
@@ -16,7 +15,7 @@ namespace Tests
             Assert.Greater(res.Tags.Count, 0);
         }
 
-        [Test]
+        [Fact]
         public void CanAutocompleteTags()
         {
             var res = api.Tags.GetTags();

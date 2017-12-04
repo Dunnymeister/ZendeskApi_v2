@@ -1,14 +1,13 @@
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 
 namespace Tests
 {
-    [TestFixture]
     public class CustomRolesTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        //[Test]
+        //[Fact]
         //[Ignore]
         public void CanGetCustomRoles()
         {

@@ -3,33 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.HelpCenter.Topics;
 
 namespace Tests.HelpCenter
 {
-    [TestFixture]
     [Category("HelpCenter")]
     public class TopicTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         public void CanGetTopic()
         {
             var res = api.HelpCenter.Topics.GetTopic(200298245);
             Assert.That(res?.Topic, Is.Not.Null);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTopics()
         {
             var res = api.HelpCenter.Topics.GetTopics();
             Assert.That(res.Topics.Count, Is.GreaterThan(0));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteTopic()
         {
             var topic = new Topic { Name = "This is a Test" };
