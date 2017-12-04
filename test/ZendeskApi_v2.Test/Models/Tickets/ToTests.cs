@@ -14,10 +14,10 @@ namespace Tests.Models.Tickets
             var to = JsonConvert.DeserializeObject<To>(AllFieldsJson);
 
             Assert.NotNull(to);
-            Assert.AreEqual("+49 89 555 666777", to.FormattedPhone);
-            Assert.AreEqual("+4989555666777", to.Phone);
-            Assert.AreEqual("Caller +49 89 555 666777", to.Name);
-            Assert.AreEqual("Test", to.Address);
+            Assert.Equal("+49 89 555 666777", to.FormattedPhone);
+            Assert.Equal("+4989555666777", to.Phone);
+            Assert.Equal("Caller +49 89 555 666777", to.Name);
+            Assert.Equal("Test", to.Address);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Tests.Models.Tickets
             var toJson = JsonConvert.SerializeObject(to);
 
             Assert.NotNull(toJson);
-            Assert.AreEqual(AllFieldsJson, toJson);
+            Assert.Equal(AllFieldsJson, toJson);
         }
     }
 }

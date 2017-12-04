@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,14 +19,14 @@ namespace Tests.HelpCenter
         public void CanGetTopic()
         {
             var res = api.HelpCenter.Topics.GetTopic(200298245);
-            Assert.That(res?.Topic, Is.Not.Null);
+            Assert.NotNull(res?.Topic);
         }
 
         [Fact]
         public void CanGetTopics()
         {
             var res = api.HelpCenter.Topics.GetTopics();
-            Assert.That(res.Topics.Count, Is.GreaterThan(0));
+            Assert.True(res.Topics.Count > 0);
         }
 
         [Fact]
@@ -34,13 +35,13 @@ namespace Tests.HelpCenter
             var topic = new Topic { Name = "This is a Test" };
 
             var res = api.HelpCenter.Topics.CreateTopic(topic);
-            Assert.That(res?.Topic, Is.Not.Null);
+            Assert.NotNull(res?.Topic);
 
             res.Topic.Description = "More Testing";
             var update = api.HelpCenter.Topics.UpdateTopic(res.Topic).Topic;
-            Assert.That(update.Description, Is.EqualTo("More Testing"));
+            Assert.Equal(update.Description, "More Testing");
 
-            Assert.That(api.HelpCenter.Topics.DeleteTopic(res.Topic.Id.Value), Is.True);
+            Assert.True(api.HelpCenter.Topics.DeleteTopic(res.Topic.Id.Value));
         }
     }
 }

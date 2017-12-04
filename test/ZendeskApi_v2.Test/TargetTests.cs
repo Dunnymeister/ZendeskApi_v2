@@ -11,8 +11,7 @@ namespace Tests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [OneTimeSetUp]
-        public void Init()
+        public TargetTests()
         {
             var targets = api.Targets.GetAllTargets();
 

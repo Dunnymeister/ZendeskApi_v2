@@ -19,10 +19,22 @@ namespace Tests
             Assert.True(res.Count > 0);
         }
 
-        [TestCase(1, 1)]
-        [TestCase(1, 2)]
-        public void CanGetAllRequestsPaged(int perPage, int page)
+        public void GetAllRequests_PerPageIs1AndPageIs1_ReturnsResult()
         {
+            var perPage = 1;
+            var page = 1;
+            var res = _api.Requests.GetAllRequests(perPage: perPage, page: page);
+
+            Assert.NotNull(res);
+            Assert.NotNull(res.Requests);
+            Assert.Equal(perPage, res.PageSize);
+            Assert.Equal(page, res.Page);
+        }
+
+        public void GetAllRequests_PerPageIs1AndPageIs2_ReturnsResult()
+        {
+            var perPage = 1;
+            var page = 2;
             var res = _api.Requests.GetAllRequests(perPage: perPage, page: page);
 
             Assert.NotNull(res);
@@ -58,10 +70,24 @@ namespace Tests
             Assert.True(res.Count > 0);
         }
 
-        [TestCase(1, 1)]
-        [TestCase(1, 2)]
-        public void CanGetAllOpenRequestsPaged(int perPage, int page)
+        public void GetAllOpenRequests_PerPageIs1AndPageIs1_ReturnsResults()
         {
+            var perPage = 1;
+            var page = 1;
+
+            var res = _api.Requests.GetAllOpenRequests(perPage: perPage, page: page);
+
+            Assert.NotNull(res);
+            Assert.NotNull(res.Requests);
+            Assert.Equal(perPage, res.PageSize);
+            Assert.Equal(page, res.Page);
+        }
+
+        public void GetAllOpenRequests_PerPageIs1AndPageIs2_ReturnsResults()
+        {
+            var perPage = 1;
+            var page = 1;
+
             var res = _api.Requests.GetAllOpenRequests(perPage: perPage, page: page);
 
             Assert.NotNull(res);
@@ -97,10 +123,23 @@ namespace Tests
             Assert.True(res.Count > 0);
         }
 
-        [TestCase(1, 1)]
-        [TestCase(1, 2)]
-        public void CanGetAllSolvedRequestsPaged(int perPage, int page)
+        public void GetAllSolvedRequests_PerPageIs1AndPageIs1_ReturnsResults()
         {
+            var perPage = 1;
+            var page = 1;
+            var res = _api.Requests.GetAllSolvedRequests(perPage: perPage, page: page);
+
+            Assert.NotNull(res);
+            Assert.NotNull(res.Requests);
+            Assert.Equal(perPage, res.PageSize);
+            Assert.Equal(page, res.Page);
+        }
+
+        public void GetAllSolvedRequests_PerPageIs1AndPageIs2_ReturnsResults()
+        {
+            var perPage = 1;
+            var page = 1;
+
             var res = _api.Requests.GetAllSolvedRequests(perPage: perPage, page: page);
 
             Assert.NotNull(res);

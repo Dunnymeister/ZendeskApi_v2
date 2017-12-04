@@ -16,19 +16,19 @@ namespace Tests
         public void CreatesUrisCorrectly()
         {
             var res = new ZendeskApi_v2.ZendeskApi("https://csharpapi.zendesk.com/api/v2", Settings.AdminEmail, Settings.AdminPassword);
-            Assert.AreEqual(Settings.Site, res.ZendeskUrl);
+            Assert.Equal(Settings.Site, res.ZendeskUrl);
 
             var res1 = new ZendeskApi_v2.ZendeskApi("csharpapi.zendesk.com/api/v2", Settings.AdminEmail, Settings.AdminPassword);
-            Assert.AreEqual(Settings.Site, res1.ZendeskUrl);
+            Assert.Equal(Settings.Site, res1.ZendeskUrl);
 
             var res2 = new ZendeskApi_v2.ZendeskApi("csharpapi.zendesk.com", Settings.AdminEmail, Settings.AdminPassword);
-            Assert.AreEqual(Settings.Site, res2.ZendeskUrl);
+            Assert.Equal(Settings.Site, res2.ZendeskUrl);
 
             var api3 = new ZendeskApi_v2.ZendeskApi("csharpapi", Settings.AdminEmail, Settings.AdminPassword);
-            Assert.AreEqual(Settings.Site, api3.ZendeskUrl);
+            Assert.Equal(Settings.Site, api3.ZendeskUrl);
 
             var api4 = new ZendeskApi_v2.ZendeskApi("http://csharpapi.zendesk.com/api/v2", Settings.AdminEmail, Settings.AdminPassword);
-            Assert.AreEqual(Settings.Site, api4.ZendeskUrl);
+            Assert.Equal(Settings.Site, api4.ZendeskUrl);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Tests
             var ticket = api.Tickets.GetTicket(id).Ticket;
 
             Assert.NotNull(ticket);
-            Assert.AreEqual(ticket.Id, id);
+            Assert.Equal(ticket.Id, id);
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Tests
             }
             catch (Exception e)
             {
-                Assert.IsTrue(e.Message.Contains("Email: cannot be blank") && e.Data["jsonException"] != null && e.Data["jsonException"].ToString().Contains("Email: cannot be blank"));
+                Assert.True(e.Message.Contains("Email: cannot be blank") && e.Data["jsonException"] != null && e.Data["jsonException"].ToString().Contains("Email: cannot be blank"));
             }
 
         }

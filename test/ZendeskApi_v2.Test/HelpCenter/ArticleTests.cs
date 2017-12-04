@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -14,7 +15,6 @@ using ZendeskApi_v2.Requests.HelpCenter;
 namespace Tests.HelpCenter
 {
     [Category("HelpCenter")]
-    [Parallelizable(ParallelScope.None)]
     public class ArticleTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
@@ -24,36 +24,36 @@ namespace Tests.HelpCenter
         public void CanGetSingleArticle()
         {
             var res = api.HelpCenter.Articles.GetArticle(_articleIdWithComments);
-            Assert.IsNotNull(res.Article);
+            Assert.NotNull(res.Article);
         }
 
         [Fact]
         public void CanGetSingleArticleWithTranslations()
         {
             var res = api.HelpCenter.Articles.GetArticle(_articleIdWithComments, ArticleSideLoadOptionsEnum.Translations);
-            Assert.IsNotNull(res.Article);
-            Assert.Greater(res.Article.Translations.Count, 0);
+            Assert.NotNull(res.Article);
+            Assert.True(res.Article.Translations.Count > 0);
         }
 
         [Fact]
         public void CanGetArticles()
         {
             var res = api.HelpCenter.Articles.GetArticles();
-            Assert.Greater(res.Count, 0);
+            Assert.True(res.Count > 0);
 
             var resSections = api.HelpCenter.Sections.GetSections();
             var res1 = api.HelpCenter.Articles.GetArticlesBySectionId(202119686);
-            Assert.That(res1.Articles[0].SectionId, Is.EqualTo(202119686));
+            Assert.Equal(res1.Articles[0].SectionId, 202119686);
         }
 
         public void CanGetArticleSideloadedWith()
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Sections | ArticleSideLoadOptionsEnum.Categories | ArticleSideLoadOptionsEnum.Users);
 
-            Assert.IsTrue(res.Articles.Count > 0);
-            Assert.IsTrue(res.Categories.Count > 0);
-            Assert.IsTrue(res.Sections.Count > 0);
-            Assert.IsTrue(res.Users.Count > 0);
+            Assert.True(res.Articles.Count > 0);
+            Assert.True(res.Categories.Count > 0);
+            Assert.True(res.Sections.Count > 0);
+            Assert.True(res.Users.Count > 0);
         }
 
         [Fact]
@@ -61,8 +61,8 @@ namespace Tests.HelpCenter
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Users);
 
-            Assert.IsTrue(res.Articles.Count > 0);
-            Assert.IsTrue(res.Users.Count > 0);
+            Assert.True(res.Articles.Count > 0);
+            Assert.True(res.Users.Count > 0);
         }
 
         [Fact]
@@ -70,8 +70,8 @@ namespace Tests.HelpCenter
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Sections);
 
-            Assert.IsTrue(res.Articles.Count > 0);
-            Assert.IsTrue(res.Sections.Count > 0);
+            Assert.True(res.Articles.Count > 0);
+            Assert.True(res.Sections.Count > 0);
         }
 
         [Fact]
@@ -79,8 +79,8 @@ namespace Tests.HelpCenter
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Categories);
 
-            Assert.IsTrue(res.Articles.Count > 0);
-            Assert.IsTrue(res.Categories.Count > 0);
+            Assert.True(res.Articles.Count > 0);
+            Assert.True(res.Categories.Count > 0);
         }
 
         [Fact]
@@ -88,9 +88,9 @@ namespace Tests.HelpCenter
         {
             var res = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.Categories | ArticleSideLoadOptionsEnum.Sections | ArticleSideLoadOptionsEnum.Users | ArticleSideLoadOptionsEnum.Translations);
 
-            Assert.IsTrue(res.Categories[0].Translations.Count > 0);
-            Assert.IsTrue(res.Articles[0].Translations.Count > 0);
-            Assert.IsTrue(res.Sections[0].Translations.Count > 0);
+            Assert.True(res.Categories[0].Translations.Count > 0);
+            Assert.True(res.Articles[0].Translations.Count > 0);
+            Assert.True(res.Sections[0].Translations.Count > 0);
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace Tests.HelpCenter
             var firstCategory = api.HelpCenter.Categories.GetCategories().Categories[0];
             var res = api.HelpCenter.Articles.GetArticlesByCategoryId(firstCategory.Id.Value, ArticleSideLoadOptionsEnum.Sections);
 
-            Assert.IsTrue(res.Sections.Count > 0);
+            Assert.True(res.Sections.Count > 0);
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace Tests.HelpCenter
             var articlesAscending = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title });
             var articlesDescending = api.HelpCenter.Articles.GetArticles(ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title, SortOrder = ArticleSortOrderEnum.Desc });
 
-            Assert.IsTrue(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
+            Assert.True(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace Tests.HelpCenter
             var articlesDescending = api.HelpCenter.Articles.GetArticlesBySectionId(section.Id.Value, ArticleSideLoadOptionsEnum.None,
                 new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title, SortOrder = ArticleSortOrderEnum.Desc });
 
-            Assert.IsTrue(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
+            Assert.True(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Tests.HelpCenter
             var articlesAscending = api.HelpCenter.Articles.GetArticlesByCategoryId(category.Id.Value, ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title });
             var articlesDescending = api.HelpCenter.Articles.GetArticlesByCategoryId(category.Id.Value, ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title, SortOrder = ArticleSortOrderEnum.Desc });
 
-            Assert.IsTrue(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
+            Assert.True(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
         }
 
         [Fact]
@@ -147,11 +147,11 @@ namespace Tests.HelpCenter
                 Body = "The body of my article",
                 Locale = "en-us"
             });
-            Assert.Greater(res.Article.Id, 0);
+            Assert.True(res.Article.Id > 0);
 
             res.Article.LabelNames = new string[] { "updated" };
             var update = api.HelpCenter.Articles.UpdateArticleAsync(res.Article).Result;
-            Assert.That(update.Article.LabelNames, Is.EqualTo(res.Article.LabelNames));
+            Assert.Equal(update.Article.LabelNames, res.Article.LabelNames);
 
             Assert.True(api.HelpCenter.Articles.DeleteArticle(res.Article.Id.Value));
         }
@@ -160,19 +160,19 @@ namespace Tests.HelpCenter
         public void CanGetSingleArticleWithTranslationsAsync()
         {
             var res = api.HelpCenter.Articles.GetArticleAsync(_articleIdWithComments, ArticleSideLoadOptionsEnum.Translations).Result;
-            Assert.IsNotNull(res.Article);
-            Assert.Greater(res.Article.Translations.Count, 0);
+            Assert.NotNull(res.Article);
+            Assert.True(res.Article.Translations.Count > 0);
         }
 
         [Fact]
         public async Task CanGetArticlesAsync()
         {
             var res = await api.HelpCenter.Articles.GetArticlesAsync();
-            Assert.Greater(res.Count, 0);
+            Assert.True(res.Count > 0);
 
             var resSections = await api.HelpCenter.Sections.GetSectionsAsync();
             var res1 = await api.HelpCenter.Articles.GetArticlesBySectionIdAsync(202119686);
-            Assert.That(res1.Articles[0].SectionId, Is.EqualTo(202119686));
+            Assert.Equal(res1.Articles[0].SectionId, 202119686);
         }
 
         [Fact]
@@ -186,11 +186,11 @@ namespace Tests.HelpCenter
                 Locale = "en-us"
             });
 
-            Assert.Greater(res.Article.Id, 0);
+            Assert.True(res.Article.Id > 0);
 
             res.Article.LabelNames = new string[] { "photo", "tripod" };
             var update = await api.HelpCenter.Articles.UpdateArticleAsync(res.Article);
-            Assert.AreEqual(update.Article.LabelNames, res.Article.LabelNames);
+            Assert.Equal(update.Article.LabelNames, res.Article.LabelNames);
 
             Assert.True(await api.HelpCenter.Articles.DeleteArticleAsync(res.Article.Id.Value));
         }
@@ -201,10 +201,10 @@ namespace Tests.HelpCenter
             var pageSize = 3;
 
             var res = await api.HelpCenter.Articles.GetArticlesAsync(perPage: pageSize);
-            Assert.That(res.PageSize, Is.EqualTo(pageSize));
+            Assert.Equal(res.PageSize, pageSize);
 
             var resp = await api.HelpCenter.Articles.GetByPageUrlAsync<GroupArticleResponse>(res.NextPage, pageSize);
-            Assert.That(resp.Page, Is.EqualTo(2));
+            Assert.Equal(resp.Page, 2);
         }
 
         [Fact]
@@ -212,7 +212,7 @@ namespace Tests.HelpCenter
         {
             var resp = await api.HelpCenter.Articles.SearchArticlesForAsync("Test", createdBefore: DateTime.Now);
 
-            Assert.That(resp.Count, Is.GreaterThan(0));
+            Assert.True(resp.Count > 0);
         }
 
         [Fact]
@@ -220,7 +220,7 @@ namespace Tests.HelpCenter
         {
             var resp = api.HelpCenter.Articles.SearchArticlesFor("Test", createdBefore: DateTime.Now);
 
-            Assert.That(resp.Count, Is.GreaterThan(0));
+            Assert.True(resp.Count > 0);
         }
     }
 }

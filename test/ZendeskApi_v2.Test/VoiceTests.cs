@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace Tests
             ticketid = Settings.SampleTicketId;
 
             var result = api.Voice.OpenTicketInAgentBrowser(agentid, ticketid);
-            Assert.IsTrue(result);
+            Assert.True(result);
         }
 
         [Fact]
@@ -33,7 +34,7 @@ namespace Tests
             ticketid = Settings.SampleTicketId;
 
             var result = api.Voice.OpenTicketInAgentBrowserAsync(agentid, ticketid);
-            Assert.IsTrue(result.Result);
+            Assert.True(result.Result);
         }
 
         [Fact]
@@ -43,7 +44,7 @@ namespace Tests
             userid = Settings.EndUserId;
 
             var result = api.Voice.OpenUserProfileInAgentBrowser(agentid, userid);
-            Assert.IsTrue(result);
+            Assert.True(result);
         }
 
         [Fact]
@@ -53,7 +54,7 @@ namespace Tests
             userid = Settings.EndUserId;
 
             var result = api.Voice.OpenUserProfileInAgentBrowserAsync(agentid, userid);
-            Assert.IsTrue(result.Result);
+            Assert.True(result.Result);
         }
 
         [Fact]
@@ -63,7 +64,7 @@ namespace Tests
 
             var agent = res.AgentActivity.FirstOrDefault();
             Assert.NotNull(agent);
-            Assert.AreEqual(2110053086, agent.AgentId); 
+            Assert.Equal(2110053086, agent.AgentId); 
         }
 
         [Fact]
@@ -73,7 +74,7 @@ namespace Tests
 
             var agent = res.Result.AgentActivity.FirstOrDefault();
             Assert.NotNull(agent);
-            Assert.AreEqual(2110053086, agent.AgentId); 
+            Assert.Equal(2110053086, agent.AgentId); 
         }
 
         [Fact]

@@ -15,9 +15,7 @@ namespace Tests
     {
         ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [OneTimeSetUp]
-        [OneTimeTearDown]
-        public void Init()
+        public OrganizationTests()
         {
             var orgs = api.Organizations.GetOrganizations();
             if (orgs != null)

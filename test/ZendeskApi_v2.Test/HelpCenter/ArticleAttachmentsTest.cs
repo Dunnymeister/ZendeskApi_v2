@@ -10,6 +10,7 @@ using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Articles;
 using ZendeskApi_v2.Models.Shared;
+using ZendeskApi_v2.Test.Util;
 
 namespace Tests.HelpCenter
 {
@@ -17,6 +18,7 @@ namespace Tests.HelpCenter
     [Category("HelpCenter")]
     public class ArticleAttachmentsTest
     {
+        private const string ResourceName = "ZendeskApi_v2.Test.Resources.testupload.txt";
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
         [Fact]
@@ -29,11 +31,12 @@ namespace Tests.HelpCenter
         [Fact]
         public void CanUploadAttachmentsForArticle()
         {
+            var fileData = ResourceUtil.GetResource(ResourceName);
             var file = new ZenFile()
             {
                 ContentType = "text/plain",
                 FileName = "testupload.txt",
-                FileData = File.ReadAllBytes(TestContext.CurrentContext.TestDirectory + "\\testupload.txt")
+                FileData = fileData
             };
 
             var respSections = api.HelpCenter.Sections.GetSections();
@@ -61,11 +64,13 @@ namespace Tests.HelpCenter
         [Fact]
         public async Task CanUploadAttachmentsForArticleAsync()
         {
+            var fileData = ResourceUtil.GetResource(ResourceName);
+
             var file = new ZenFile()
             {
                 ContentType = "text/plain",
                 FileName = "testupload.txt",
-                FileData = File.ReadAllBytes(TestContext.CurrentContext.TestDirectory + "\\testupload.txt")
+                FileData = fileData
             };
 
             var respSections = await api.HelpCenter.Sections.GetSectionsAsync();

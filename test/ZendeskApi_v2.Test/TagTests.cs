@@ -12,7 +12,7 @@ namespace Tests
         {
             var res = api.Tags.GetTags();
 
-            Assert.Greater(res.Tags.Count, 0);
+            Assert.True(res.Tags.Count > 0);
         }
 
         [Fact]
@@ -21,7 +21,7 @@ namespace Tests
             var res = api.Tags.GetTags();
             var auto = api.Tags.AutocompleteTags(res.Tags[0].Name.Substring(0, 3));
 
-            Assert.Greater(auto.Tags.Count, 0);
+            Assert.True(auto.Tags.Count > 0);
         }
     }
 }

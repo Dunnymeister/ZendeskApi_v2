@@ -15,6 +15,7 @@ using ZendeskApi_v2.Models.Shared;
 using ZendeskApi_v2.Models.Tickets;
 using ZendeskApi_v2.Requests;
 using ZendeskApi_v2.Models.Brands;
+using ZendeskApi_v2.Test.Util;
 
 namespace Tests
 {
@@ -22,18 +23,19 @@ namespace Tests
     [Category("Tickets")]
     public class TicketTests
     {
+        private const string ResourceName = "ZendeskApi_v2.Test.Resources.testupload.txt";
+
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
         private TicketSideLoadOptionsEnum ticketSideLoadOptions = TicketSideLoadOptionsEnum.Users | TicketSideLoadOptionsEnum.Organizations | TicketSideLoadOptionsEnum.Groups;
 
-        [OneTimeTearDown]
-        public async Task TestCleanUp()
+        public TicketTests()
         {
-            var response = await api.Tickets.GetTicketFieldsAsync();
+            var response =  api.Tickets.GetTicketFieldsAsync().Result;
             foreach (var item in response.TicketFields)
             {
                 if (item.Title == "My Tagger 2")
                 {
-                    await api.Tickets.DeleteTicketFieldAsync(item.Id.Value);
+                    api.Tickets.DeleteTicketFieldAsync(item.Id.Value);
                 }
             }
         }
@@ -425,7 +427,7 @@ namespace Tests
             Assert.True(res.Id > 0);
 
             Assert.Equal(res.CreatedAt, res.UpdatedAt);
-            Assert.LessOrEqual(res.CreatedAt - DateTimeOffset.UtcNow, TimeSpan.FromMinutes(1.0));
+            Assert.True(res.CreatedAt - DateTimeOffset.UtcNow <= TimeSpan.FromMinutes(1.0));
 
             res.Status = TicketStatus.Solved;
             res.AssigneeId = Settings.UserId;
@@ -440,7 +442,7 @@ namespace Tests
             Assert.NotNull(updateResponse);
             //Assert.Equal(updateResponse.Audit.Events.First().Body, body);
             Assert.True(updateResponse.Ticket.CollaboratorIds.Count > 0);
-            Assert.GreaterOrEqual(updateResponse.Ticket.UpdatedAt, updateResponse.Ticket.CreatedAt);
+            Assert.True(updateResponse.Ticket.UpdatedAt >= updateResponse.Ticket.CreatedAt);
 
             Assert.True(api.Tickets.Delete(res.Id.Value));
         }
@@ -607,11 +609,13 @@ namespace Tests
         [Fact]
         public async Task CanAddAttachmentToTicketAsync()
         {
+            var fileData = ResourceUtil.GetResource(ResourceName);
+
             var res = await api.Attachments.UploadAttachmentAsync(new ZenFile()
             {
                 ContentType = "text/plain",
                 FileName = "testupload.txt",
-                FileData = File.ReadAllBytes(TestContext.CurrentContext.TestDirectory + "\\testupload.txt")
+                FileData = fileData
             });
 
             var ticket = new Ticket()
@@ -636,13 +640,13 @@ namespace Tests
         [Fact]
         public void CanAddAttachmentToTicket()
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "testupload.txt");
+            var fileData = ResourceUtil.GetResource(ResourceName);
 
             var res = api.Attachments.UploadAttachment(new ZenFile()
             {
                 ContentType = "text/plain",
                 FileName = "testupload.txt",
-                FileData = File.ReadAllBytes(path)
+                FileData = fileData
             });
 
             var ticket = new Ticket()

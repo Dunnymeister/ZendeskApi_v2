@@ -11,8 +11,7 @@ namespace Tests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [OneTimeSetUp]
-        public void Init()
+        public TriggerTests()
         {
             var triggers = api.Triggers.GetTriggers();
             if (triggers != null)
@@ -28,10 +27,10 @@ namespace Tests
         public void CanGetTriggers()
         {
             var res = api.Triggers.GetTriggers();
-            Assert.Greater(res.Count, 0);
+            Assert.True(res.Count > 0);
 
             var ind = api.Triggers.GetTriggerById(res.Triggers[0].Id.Value);
-            Assert.AreEqual(ind.Trigger.Id, res.Triggers[0].Id);
+            Assert.Equal(ind.Trigger.Id, res.Triggers[0].Id);
         }
 
         [Fact]
@@ -51,11 +50,11 @@ namespace Tests
 
             var res = api.Triggers.CreateTrigger(trigger);
 
-            Assert.Greater(res.Trigger.Id, 0);
+            Assert.True(res.Trigger.Id > 0);
 
             res.Trigger.Title = "Test Trigger Updated";
             var update = api.Triggers.UpdateTrigger(res.Trigger);
-            Assert.AreEqual(update.Trigger.Title, res.Trigger.Title);
+            Assert.Equal(update.Trigger.Title, res.Trigger.Title);
 
             Assert.True(api.Triggers.DeleteTrigger(res.Trigger.Id.Value));
         }
@@ -64,7 +63,7 @@ namespace Tests
         public void CanReorderTriggers()
         {
             var res = api.Triggers.GetActiveTriggers().Triggers;
-            Assert.AreEqual(res.Count(), 0);
+            Assert.Equal(res.Count(), 0);
 
             var trigger = new Trigger()
             {
@@ -93,7 +92,7 @@ namespace Tests
 
             res = api.Triggers.GetActiveTriggers().Triggers;
 
-            Assert.AreEqual(res[0].Id.Value, res3.Trigger.Id.Value);
+            Assert.Equal(res[0].Id.Value, res3.Trigger.Id.Value);
 
             Assert.True(api.Triggers.DeleteTrigger(res2.Trigger.Id.Value));
             Assert.True(api.Triggers.DeleteTrigger(res3.Trigger.Id.Value));

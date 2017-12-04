@@ -11,13 +11,17 @@ namespace Tests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [OneTimeSetUp]
-        public void Init()
+        public ScheduleTests()
         {
             var schedules = api.Schedules.GetAllSchedules();
             if (schedules != null)
             {
                 foreach (var schedule in schedules.Schedules.Where(o => o.Name.Contains("Test Schedule")))
+                {
+                    api.Schedules.DeleteSchedule(schedule.Id.Value);
+                }
+
+                foreach (var schedule in schedules.Schedules.Where(o => o.Name.Contains("Master Test Schedule")))
                 {
                     api.Schedules.DeleteSchedule(schedule.Id.Value);
                 }
@@ -30,27 +34,14 @@ namespace Tests
             });
         }
 
-        [OneTimeTearDown]
-        public void Dispose()
-        {
-            var schedules = api.Schedules.GetAllSchedules();
-            if (schedules != null)
-            {
-                foreach (var schedule in schedules.Schedules.Where(o => o.Name.Contains("Master Test Schedule")))
-                {
-                    api.Schedules.DeleteSchedule(schedule.Id.Value);
-                }
-            }
-        }
-
         [Fact]
         public void CanGetSchedules()
         {
             var res = api.Schedules.GetAllSchedules();
-            Assert.Greater(res.Schedules.Count, 0);
+            Assert.True(res.Schedules.Count > 0);
 
             var org = api.Schedules.GetSchedule(res.Schedules[0].Id.Value);
-            Assert.AreEqual(org.Schedule.Id, res.Schedules[0].Id);
+            Assert.Equal(org.Schedule.Id, res.Schedules[0].Id);
         }
 
         [Fact]
@@ -62,11 +53,11 @@ namespace Tests
                 TimeZone = "Pacific Time (US & Canada)"
             });
 
-            Assert.Greater(res.Schedule.Id, 0);
+            Assert.True(res.Schedule.Id > 0);
 
             res.Schedule.TimeZone = "Central Time (US & Canada)";
             var update = api.Schedules.UpdateSchedule(res.Schedule);
-            Assert.AreEqual(update.Schedule.TimeZone, res.Schedule.TimeZone);
+            Assert.Equal(update.Schedule.TimeZone, res.Schedule.TimeZone);
 
             Assert.True(api.Schedules.DeleteSchedule(res.Schedule.Id.Value));
         }
@@ -80,7 +71,7 @@ namespace Tests
                 TimeZone = "Pacific Time (US & Canada)"
             });
 
-            Assert.Greater(res.Schedule.Id, 0);
+            Assert.True(res.Schedule.Id > 0);
 
             var work = new WorkWeek();
             work.Intervals = res.Schedule.Intervals;
@@ -89,9 +80,9 @@ namespace Tests
             work.Intervals[0].EndTime = 2460;
             var update = api.Schedules.UpdateIntervals(res.Schedule.Id.Value, work);
 
-            Assert.Greater(update.WorkWeek.Intervals.Count, 0);
+            Assert.True(update.WorkWeek.Intervals.Count > 0);
 
-            Assert.AreEqual(work.Intervals[0].EndTime, update.WorkWeek.Intervals[0].EndTime);
+            Assert.Equal(work.Intervals[0].EndTime, update.WorkWeek.Intervals[0].EndTime);
             Assert.True(api.Schedules.DeleteSchedule(res.Schedule.Id.Value));
         }
 
@@ -111,12 +102,12 @@ namespace Tests
                 EndDate = DateTimeOffset.Parse("2016-02-05")
             });
 
-            Assert.Greater(res2.Holiday.Id, 0);
+            Assert.True(res2.Holiday.Id > 0);
 
             res2.Holiday.EndDate = DateTimeOffset.Parse("2016-02-06");
             var update = api.Schedules.UpdateHoliday(res.Schedule.Id.Value, res2.Holiday);
-            Assert.AreEqual(update.Holiday.Name, res2.Holiday.Name);
-            Assert.AreEqual(update.Holiday.EndDate, res2.Holiday.EndDate);
+            Assert.Equal(update.Holiday.Name, res2.Holiday.Name);
+            Assert.Equal(update.Holiday.EndDate, res2.Holiday.EndDate);
 
             Assert.True(api.Schedules.DeleteHoliday(res.Schedule.Id.Value, res2.Holiday.Id.Value));
             Assert.True(api.Schedules.DeleteSchedule(res.Schedule.Id.Value));

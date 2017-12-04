@@ -1,6 +1,4 @@
 using Xunit;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Brands;
@@ -11,9 +9,7 @@ namespace Tests
     public class BrandTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
-
-        [OneTimeSetUp]
-        public void Init()
+        public BrandTests()
         {
             var brands = api.Brands.GetBrands();
             if (brands != null)
@@ -29,10 +25,10 @@ namespace Tests
         public void CanGetBrands()
         {
             var res = api.Brands.GetBrands();
-            Assert.Greater(res.Count, 0);
+            Assert.True(res.Count > 0);
 
             var ind = api.Brands.GetBrand(res.Brands[0].Id.Value);
-            Assert.AreEqual(ind.Brand.Id, res.Brands[0].Id);            
+            Assert.Equal(ind.Brand.Id, res.Brands[0].Id);            
         }
 
         [Fact]
@@ -47,11 +43,11 @@ namespace Tests
 
             var res = api.Brands.CreateBrand(brand);
 
-            Assert.Greater(res.Brand.Id, 0);
+            Assert.True(res.Brand.Id > 0);
 
             res.Brand.Name = "Test Brand Updated";
             var update        = api.Brands.UpdateBrand(res.Brand);
-            Assert.AreEqual(update.Brand.Name, res.Brand.Name);
+            Assert.Equal(update.Brand.Name, res.Brand.Name);
 
             Assert.True(api.Brands.DeleteBrand(res.Brand.Id.Value));
         }

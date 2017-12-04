@@ -9,21 +9,25 @@ using ZendeskApi_v2.Models.Constants;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using ZendeskApi_v2.Test.Util;
 
 namespace Tests
 {
     public class AttachmentTests
     {
+        private const string ResourceName = "ZendeskApi_v2.Test.Resources.testupload.txt";
+
         ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
         [Fact]
         public void CanUploadAttachments()
         {
+            var fileData = ResourceUtil.GetResource(ResourceName);
             var res = api.Attachments.UploadAttachment(new ZenFile()
             {
                 ContentType = "text/plain",
                 FileName = "testupload.txt",
-                FileData = File.ReadAllBytes(Path.Combine(TestContext.CurrentContext.TestDirectory, "testupload.txt"))
+                FileData = fileData
             });
             Assert.True(!string.IsNullOrEmpty(res.Token));
         }
@@ -32,13 +36,13 @@ namespace Tests
         [Fact]
         public async Task CanDowloadAttachment()
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "testupload.txt");
+            var fileData = ResourceUtil.GetResource(ResourceName);
 
             var res = await api.Attachments.UploadAttachmentAsync(new ZenFile()
             {
                 ContentType = "text/plain",
                 FileName = "testupload.txt",
-                FileData = File.ReadAllBytes(path)
+                FileData = fileData
             });
 
             var ticket = new Ticket()
@@ -54,15 +58,15 @@ namespace Tests
             };
 
             var t1 = await api.Tickets.CreateTicketAsync(ticket);
-            Assert.That(t1.Audit.Events.First().Attachments.Count, Is.EqualTo(1));
+            Assert.Equal(t1.Audit.Events.First().Attachments.Count, 1);
 
             var test = t1.Audit.Events.First().Attachments.First();
             var file = await api.Attachments.DownloadAttachmentAsync(test);
 
-            Assert.That(file.FileData, Is.Not.Null);
+            Assert.NotNull(file.FileData);
 
-            Assert.That(api.Tickets.Delete(t1.Ticket.Id.Value), Is.True);
-            Assert.That(api.Attachments.DeleteUpload(res));
+            Assert.True(api.Tickets.Delete(t1.Ticket.Id.Value));
+            Assert.True(api.Attachments.DeleteUpload(res));
         }
     }
 }

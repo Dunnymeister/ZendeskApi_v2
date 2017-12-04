@@ -58,8 +58,8 @@ namespace Tests
             //id for all unsolved tickets
             var res = api.Views.ExecuteView(31559032);
 
-            Assert.Greater(res.Rows.Count, 0);
-            Assert.Greater(res.Columns.Count, 0);
+            Assert.True(res.Rows.Count > 0);
+            Assert.True(res.Columns.Count > 0);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Tests
         {
             var res = api.Views.ExecuteView(Settings.ViewId, "", true, 25, 2);
 
-            Assert.AreEqual(25, res.Rows.Count);
+            Assert.Equal(25, res.Rows.Count);
 
             var nextPage = res.NextPage.GetQueryStringDict()
                     .Where(x => x.Key == "page")
@@ -76,7 +76,7 @@ namespace Tests
 
             Assert.NotNull(nextPage);
 
-            Assert.AreEqual("3", nextPage);
+            Assert.Equal("3", nextPage);
         }
 
         [Fact]
@@ -92,8 +92,8 @@ namespace Tests
             };
 
             var previewRes = api.Views.PreviewView(preview);
-            Assert.Greater(previewRes.Rows.Count, 0);
-            Assert.Greater(previewRes.Columns.Count, 0);
+            Assert.True(previewRes.Rows.Count > 0);
+            Assert.True(previewRes.Columns.Count > 0);
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace Tests
         {
             var views = api.Views.GetAllViews();
             var res = api.Views.GetViewCounts(new List<long>() { views.Views[0].Id });
-            Assert.Greater(res.ViewCounts.Count, 0);
+            Assert.True(res.ViewCounts.Count > 0);
 
             Assert.True(views.Count > 0);
         }

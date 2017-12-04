@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -9,12 +10,14 @@ using ZendeskApi_v2.Models.Users;
 using ZendeskApi_v2.Requests;
 using ZendeskApi_v2.Models.Shared;
 using System.IO;
+using ZendeskApi_v2.Test.Util;
 
 namespace Tests
 {
     [Category("Users")]
     public class UserTests
     {
+        private const string ResourceName = "ZendeskApi_v2.Test.Resources.gracehoppertocat3.jpg";
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
         [Fact]
@@ -59,7 +62,7 @@ namespace Tests
             var user = res.Users.FirstOrDefault();
 
             Assert.NotNull(user);
-            Assert.AreEqual(1158278453, user.Id);
+            Assert.Equal(1158278453, user.Id);
         }
 
         [Fact]
@@ -67,7 +70,7 @@ namespace Tests
         {
             var res = api.Users.SearchByCustomUserField(Settings.FieldKey, Settings.BadFieldValue);
 
-            Assert.AreEqual(0, res.Users.Count);
+            Assert.Equal(0, res.Users.Count);
             Assert.Null(res.Users.FirstOrDefault());
         }
 
@@ -117,7 +120,7 @@ namespace Tests
 
             var res1 = api.Users.CreateUser(user);
             var userId = res1.User.Id ?? 0;
-            Assert.IsTrue(res1.User.Id > 0);
+            Assert.True(res1.User.Id > 0);
 
             Assert.True(api.Users.SetUsersPassword(userId, "t34sssting"));
             Assert.True(api.Users.ChangeUsersPassword(userId, "t34sssting", "newpassw33rd"));
@@ -127,16 +130,16 @@ namespace Tests
 
             var res2 = api.Users.UpdateUser(res1.User);
             var blah = api.Users.GetUser(res1.User.Id.Value);
-            Assert.AreEqual(res1.User.Phone, res2.User.Phone);
+            Assert.Equal(res1.User.Phone, res2.User.Phone);
 
             var res3 = api.Users.SuspendUser(res2.User.Id.Value);
-            Assert.IsTrue(res3.User.Suspended);
+            Assert.True(res3.User.Suspended);
 
             var res4 = api.Users.DeleteUser(res3.User.Id.Value);
             Assert.True(res4);
 
             //check the remote photo url
-            //Assert.AreEqual(res1.User.RemotePhotoUrl, res2.User.RemotePhotoUrl);
+            //Assert.Equal(res1.User.RemotePhotoUrl, res2.User.RemotePhotoUrl);
         }
 
         [Fact]
@@ -152,8 +155,8 @@ namespace Tests
         {
             var res1 = api.Users.SearchByPhone(Settings.Phone);
             Assert.True(res1.Users.Count > 0);
-            Assert.AreEqual(Settings.Phone, res1.Users.First().Phone);
-            Assert.AreEqual("0897c9c1f80646118a8194c942aa84cf 162a3d865f194ef8b7a2ad3525ea6d7c", res1.Users.First().Name);
+            Assert.Equal(Settings.Phone, res1.Users.First().Phone);
+            Assert.Equal("0897c9c1f80646118a8194c942aa84cf 162a3d865f194ef8b7a2ad3525ea6d7c", res1.Users.First().Name);
         }
 
         [Fact]
@@ -161,8 +164,8 @@ namespace Tests
         {
             var res1 = api.Users.SearchByPhone(Settings.FormattedPhone);
             Assert.True(res1.Users.Count > 0);
-            Assert.AreEqual(Settings.FormattedPhone, res1.Users.First().Phone);
-            Assert.AreEqual("dc4d7cf57d0c435cbbb91b1d4be952fe 504b509b0b1e48dda2c8471a88f068a5", res1.Users.First().Name);
+            Assert.Equal(Settings.FormattedPhone, res1.Users.First().Phone);
+            Assert.Equal("dc4d7cf57d0c435cbbb91b1d4be952fe 504b509b0b1e48dda2c8471a88f068a5", res1.Users.First().Name);
         }
 
         [Fact]
@@ -170,8 +173,8 @@ namespace Tests
         {
             var res1 = api.Users.SearchByPhoneAsync(Settings.Phone).Result;
             Assert.True(res1.Users.Count > 0);
-            Assert.AreEqual(Settings.Phone, res1.Users.First().Phone);
-            Assert.AreEqual("0897c9c1f80646118a8194c942aa84cf 162a3d865f194ef8b7a2ad3525ea6d7c", res1.Users.First().Name);
+            Assert.Equal(Settings.Phone, res1.Users.First().Phone);
+            Assert.Equal("0897c9c1f80646118a8194c942aa84cf 162a3d865f194ef8b7a2ad3525ea6d7c", res1.Users.First().Name);
         }
 
         [Fact]
@@ -201,10 +204,10 @@ namespace Tests
             var res = api.Users.GetCurrentUser();
 
             var res1 = api.Users.GetUserIdentities(res.User.Id.Value);
-            Assert.Greater(res1.Identities[0].Id, 0);
+            Assert.True(res1.Identities[0].Id > 0);
 
             var res2 = api.Users.GetSpecificUserIdentity(res.User.Id.Value, res1.Identities[0].Id.Value);
-            Assert.Greater(res2.Identity.Id, 0);
+            Assert.True(res2.Identity.Id > 0);
         }
 
         [Fact]
@@ -231,13 +234,13 @@ namespace Tests
                 Value = "moretest@test.com"
             });
             var identityId = res2.Identity.Id.Value;
-            Assert.Greater(identityId, 0);
+            Assert.True(identityId > 0);
 
             var verfified = api.Users.SetUserIdentityAsVerified(userId, identityId);
-            Assert.AreEqual(identityId, verfified.Identity.Id);
+            Assert.Equal(identityId, verfified.Identity.Id);
 
             var primaries = api.Users.SetUserIdentityAsPrimary(userId, identityId);
-            Assert.AreEqual(identityId, primaries.Identities.First(x => x.Primary).Id);
+            Assert.Equal(identityId, primaries.Identities.First(x => x.Primary).Id);
 
             Assert.True(api.Users.DeleteUserIdentity(userId, identityId));
             Assert.True(api.Users.DeleteUser(userId));
@@ -266,9 +269,9 @@ namespace Tests
             await Task.Delay(1000);
             var mergedIdentities = await api.Users.GetUserIdentitiesAsync(mergedUser.User.Id.Value);
 
-            Assert.That(resultUser2.User.Id, Is.EqualTo(mergedUser.User.Id));
-            Assert.IsTrue(mergedIdentities.Identities.Any(i => i.Value.ToLower() == user1.Email.ToLower()));
-            Assert.IsTrue(mergedIdentities.Identities.Any(i => i.Value.ToLower() == user2.Email.ToLower()));
+            Assert.Equal(resultUser2.User.Id, mergedUser.User.Id);
+            Assert.True(mergedIdentities.Identities.Any(i => i.Value.ToLower() == user1.Email.ToLower()));
+            Assert.True(mergedIdentities.Identities.Any(i => i.Value.ToLower() == user2.Email.ToLower()));
 
             api.Users.DeleteUser(resultUser1.User.Id.Value);
             api.Users.DeleteUser(resultUser2.User.Id.Value);
@@ -280,8 +283,8 @@ namespace Tests
             var userList = api.Users.GetAllUsers(10, 1).Users.Select(u => u.Id.Value).ToList();
             var result = api.Users.GetMultipleUsers(userList, UserSideLoadOptions.Organizations | UserSideLoadOptions.Identities | UserSideLoadOptions.Roles);
 
-            Assert.AreEqual(userList.Count, result.Count);
-            Assert.IsTrue((result.Organizations != null && result.Organizations.Any()) || (result.Identities != null && result.Identities.Any()));
+            Assert.Equal(userList.Count, result.Count);
+            Assert.True((result.Organizations != null && result.Organizations.Any()) || (result.Identities != null && result.Identities.Any()));
         }
 
         [Fact]
@@ -289,41 +292,41 @@ namespace Tests
         {
             var userList = api.Users.GetAllUsersAsync(10, 1).Result.Users.Select(u => u.Id.Value).ToList();
             var result = api.Users.GetMultipleUsers(userList, UserSideLoadOptions.Organizations | UserSideLoadOptions.Identities);
-            Assert.AreEqual(userList.Count, result.Count);
-            Assert.IsTrue((result.Organizations != null && result.Organizations.Any()) || (result.Identities != null && result.Identities.Any()));
+            Assert.Equal(userList.Count, result.Count);
+            Assert.True((result.Organizations != null && result.Organizations.Any()) || (result.Identities != null && result.Identities.Any()));
         }
 
         [Fact]
         public void CanSetUserPhoto()
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "gracehoppertocat3.jpg");
+            var fileData = ResourceUtil.GetResource(ResourceName);
 
             var file = new ZenFile()
             {
                 ContentType = "image/jpeg",
                 FileName = "gracehoppertocat3.jpg",
-                FileData = File.ReadAllBytes(path)
+                FileData = fileData
             };
 
             var user = api.Users.SetUserPhoto(Settings.UserId, file);
-            Assert.That(user.User.Photo.ContentUrl, Is.Not.Null);
-            Assert.That(user.User.Photo.Size, Is.Not.Zero);
+            Assert.NotNull(user.User.Photo.ContentUrl);
+            Assert.True(user.User.Photo.Size != 0);
         }
 
         [Fact]
         public async Task CanSetUserPhotoAsync()
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "gracehoppertocat3.jpg");
+            var fileData = ResourceUtil.GetResource(ResourceName);
             var file = new ZenFile()
             {
                 ContentType = "image/jpeg",
                 FileName = "gracehoppertocat3.jpg",
-                FileData = File.ReadAllBytes(path)
+                FileData = fileData
             };
 
             var user = await api.Users.SetUserPhotoAsync(Settings.UserId, file);
-            Assert.That(user.User.Photo.ContentUrl, Is.Not.Null);
-            Assert.That(user.User.Photo.Size, Is.Not.Zero);
+            Assert.NotNull(user.User.Photo.ContentUrl);
+            Assert.True(user.User.Photo.Size != 0);
         }
 
         [Fact]
@@ -336,8 +339,8 @@ namespace Tests
             var result = api.Users.GetUserRelatedInformation(userId);
 
             //Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf(typeof(IndividualUserRelatedInformationResponse), result);
+            Assert.NotNull(result);
+            Assert.IsAssignableFrom<IndividualUserRelatedInformationResponse>(result);
         }
 
         [Fact]
@@ -350,8 +353,8 @@ namespace Tests
             var result = await api.Users.GetUserRelatedInformationAsync(userId);
 
             //Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf(typeof(IndividualUserRelatedInformationResponse), result);
+            Assert.NotNull(result);
+            Assert.IsAssignableFrom<IndividualUserRelatedInformationResponse>(result);
         }
 
         [Fact]
@@ -379,15 +382,15 @@ namespace Tests
             });
 
             var identityId = res2.Identity.Id.Value;
-            Assert.That(identityId, Is.GreaterThan(0));
+            Assert.True(identityId > 0);
             res2.Identity.Value = "moretest2@test.com";
 
             await api.Users.UpdateUserIdentityAsync(userId, res2.Identity);
 
             var res3 = await api.Users.GetSpecificUserIdentityAsync(userId, identityId);
 
-            Assert.That(res3.Identity.Id, Is.EqualTo(identityId));
-            Assert.That(res3.Identity.Value, Is.EqualTo(res2.Identity.Value));
+            Assert.Equal(res3.Identity.Id, identityId);
+            Assert.Equal(res3.Identity.Value, res2.Identity.Value);
 
             Assert.True(api.Users.DeleteUserIdentity(userId, identityId));
             Assert.True(api.Users.DeleteUser(userId));

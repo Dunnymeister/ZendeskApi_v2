@@ -45,19 +45,19 @@ namespace Tests.Models.Requests
             var openRequest = JsonConvert.DeserializeObject<Request>(OpenRequestJson);
 
             Assert.NotNull(openRequest);
-            Assert.AreEqual(Url, openRequest.Url);
-            Assert.AreEqual(Id, openRequest.Id);
-            Assert.AreEqual(OpenStatus, openRequest.Status);
-            Assert.AreEqual(Subject, openRequest.Subject);
-            Assert.AreEqual(Description, openRequest.Description);
-            Assert.AreEqual(RequesterId, openRequest.RequesterId);
-            Assert.AreEqual(OpenCanBeSolvedByMe, openRequest.CanBeSolvedByMe);
+            Assert.Equal(Url, openRequest.Url);
+            Assert.Equal(Id, openRequest.Id);
+            Assert.Equal(OpenStatus, openRequest.Status);
+            Assert.Equal(Subject, openRequest.Subject);
+            Assert.Equal(Description, openRequest.Description);
+            Assert.Equal(RequesterId, openRequest.RequesterId);
+            Assert.Equal(OpenCanBeSolvedByMe, openRequest.CanBeSolvedByMe);
 
             var solvedRequest = JsonConvert.DeserializeObject<Request>(SolvedRequestJson);
 
             Assert.NotNull(solvedRequest);
-            Assert.AreEqual(SolvedStatus, solvedRequest.Status);
-            Assert.AreEqual(SolvedCanBeSolvedByMe, solvedRequest.CanBeSolvedByMe);
+            Assert.Equal(SolvedStatus, solvedRequest.Status);
+            Assert.Equal(SolvedCanBeSolvedByMe, solvedRequest.CanBeSolvedByMe);
         }
     }
 }

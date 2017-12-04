@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.ComponentModel;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Articles;
 using ZendeskApi_v2.Requests.HelpCenter;
@@ -16,7 +17,7 @@ namespace Tests.HelpCenter
         {
             var votes = api.HelpCenter.Votes.GetVotesForArticle(_articleIdWithVotes);
 
-            Assert.IsTrue(votes.Count > 0);
+            Assert.True(votes.Count > 0);
         }
     }
 }
