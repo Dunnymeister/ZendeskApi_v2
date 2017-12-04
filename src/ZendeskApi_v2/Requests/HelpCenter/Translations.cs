@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Sections;
 using ZendeskApi_v2.Models.HelpCenter.Translations;
 
@@ -12,7 +10,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 {
 	public interface ITranslations : ICore
 	{
-#if SYNC
 
 		GroupTranslationResponse ListTranslationsForArticle( long articleId );
 		GroupTranslationResponse ListTranslationsForSection( long articleId );
@@ -35,9 +32,7 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 		bool DeleteTranslation( long translationId );
 
 		IList<string> ListAllEnabledLocalesAndDefaultLocale( out string defaultLocale );
-#endif
 
-#if ASYNC
 
 		Task<GroupTranslationResponse> ListTranslationsForArticleAsync( long articleId );
 		Task<GroupTranslationResponse> ListTranslationsForSectionAsync( long articleId );
@@ -62,7 +57,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 		Task<Tuple<IList<string>, string>> ListAllEnabledLocalesAndDefaultLocaleAsync();
 
 
-#endif
 	}
 
 	public class Translations : Core, ITranslations
@@ -72,7 +66,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 		{
 		}
 
-#if SYNC
 		public GroupTranslationResponse ListTranslationsForArticle( long articleId )
 		{
 			var resourceUrl = $"/help_center/articles/{articleId}/translations.json";
@@ -171,9 +164,7 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 			return locale_info.locales;
 		}
 
-#endif
 
-#if ASYNC
 
 
 		public async Task<GroupTranslationResponse> ListTranslationsForArticleAsync( long articleId )
@@ -272,7 +263,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 			var locale_info = Newtonsoft.Json.JsonConvert.DeserializeAnonymousType( res.Content, anon_type );
 			return new Tuple<IList<string>, string>( locale_info.locales, locale_info.default_locale );
 		}
-#endif
 
 
 	}

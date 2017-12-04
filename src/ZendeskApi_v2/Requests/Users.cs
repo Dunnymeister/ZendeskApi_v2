@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using ZendeskApi_v2.Extensions;
 
-#if ASYNC
 
 using System.Threading.Tasks;
 
-#endif
 
 using ZendeskApi_v2.Models.Shared;
 using ZendeskApi_v2.Models.Users;
@@ -28,7 +26,6 @@ namespace ZendeskApi_v2.Requests
 
     public interface IUsers : ICore
     {
-#if SYNC
 
         IndividualUserResponse GetCurrentUser();
 
@@ -102,9 +99,7 @@ namespace ZendeskApi_v2.Requests
 
         IndividualUserResponse SetUserPhoto(long userId, ZenFile photo);
 
-#endif
 
-#if ASYNC
 
         Task<IndividualUserResponse> GetCurrentUserAsync();
 
@@ -178,7 +173,6 @@ namespace ZendeskApi_v2.Requests
 
         Task<IndividualUserResponse> SetUserPhotoAsync(long userId, ZenFile photo);
 
-#endif
     }
 
     public class Users : Core, IUsers
@@ -188,7 +182,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
 
         public IndividualUserResponse GetCurrentUser()
         {
@@ -413,9 +406,7 @@ namespace ZendeskApi_v2.Requests
             return GenericPut<IndividualUserResponse>($"users/{userId}.json", null, new Dictionary<string, object> { { "user[photo][uploaded_data]", photo } });
         }
 
-#endif
 
-#if ASYNC
 
         public async Task<IndividualUserResponse> GetCurrentUserAsync()
         {
@@ -626,7 +617,6 @@ namespace ZendeskApi_v2.Requests
             return GenericPutAsync<IndividualUserResponse>($"users/{userId}.json", null, new Dictionary<string, object> { { "user[photo][uploaded_data]", photo } });
         }
 
-#endif
 
         private string GetResourceStringWithSideLoadOptionsParam(string resource, UserSideLoadOptions sideLoadOptions)
         {

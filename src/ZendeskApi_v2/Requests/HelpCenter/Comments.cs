@@ -1,7 +1,5 @@
 ﻿using System;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.HelpCenter.Comments;
 
@@ -9,17 +7,13 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 {
 	public interface IComments : ICore
 	{
-#if SYNC
 
 		GroupCommentResponse GetCommentsForArticle(long? articleId, int? perPage = null, int? page = null);
         GroupCommentResponse GetCommentsForUser(long? userId);
         GroupCommentResponse GetCommentsForCurrentUser();
-#endif
-#if ASYNC
 		Task<GroupCommentResponse> GetCommentsForArticleAsync(long? articleId);
         Task<GroupCommentResponse> GetCommentsForUserAsync(long? userId);
         Task<GroupCommentResponse> GetCommentsForCurrentUserAsync();
-#endif
 
 	}
 
@@ -33,7 +27,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 		{
 		}
 
-#if SYNC
 
 		public GroupCommentResponse GetCommentsForArticle(long? articleId, int? perPage = null, int? page = null)
 		{
@@ -49,8 +42,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 		{
 			return GenericGet<GroupCommentResponse>("help_center/users/me/comments.json");
 		}
-#endif
-#if ASYNC
 
 		public async Task<GroupCommentResponse> GetCommentsForArticleAsync(long? articleId)
 		{
@@ -66,6 +57,5 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 		{
 			return await GenericGetAsync<GroupCommentResponse>("help_center/users/me/comments.json");
 		}
-#endif
 	}
 }

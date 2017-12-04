@@ -1,6 +1,4 @@
-﻿#if ASYNC
-using System.Threading.Tasks;
-#endif
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using ZendeskApi_v2.Models.Schedules;
@@ -10,7 +8,6 @@ namespace ZendeskApi_v2.Requests
 {
     public interface ISchedules : ICore
     {
-#if SYNC
         GroupScheduleResponse GetAllSchedules();
         IndividualScheduleResponse GetSchedule(long id);
         IndividualScheduleResponse CreateSchedule(Schedule schedule);
@@ -22,8 +19,6 @@ namespace ZendeskApi_v2.Requests
         IndividualScheduleHolidayResponse CreateHoliday(long scheduleId, Holiday holiday);
         IndividualScheduleHolidayResponse UpdateHoliday(long scheduleId, Holiday holiday);
         bool DeleteHoliday(long scheduleId, long holidayId);
-#endif
-#if ASYNC
         Task<GroupScheduleResponse> GetAllSchedulesAsync();
         Task<IndividualScheduleResponse> GetScheduleAsync(long id);
         Task<IndividualScheduleResponse> CreateScheduleAsync(Schedule schedule);
@@ -35,7 +30,6 @@ namespace ZendeskApi_v2.Requests
         Task<IndividualScheduleHolidayResponse> CreateHolidayAsync(long scheduleId, Holiday holiday);
         Task<IndividualScheduleHolidayResponse> UpdateHolidayAsync(long scheduleId, Holiday holiday);
         Task<bool> DeleteHolidayAsync(long scheduleId, long holidayId);
-#endif
     }
     public class Schedules : Core, ISchedules
     {
@@ -44,7 +38,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public GroupScheduleResponse GetAllSchedules()
         {
             return GenericGet<GroupScheduleResponse>("business_hours/schedules.json");
@@ -104,9 +97,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericDelete($"business_hours/schedules/{scheduleId}/holidays/{holidayId}.json");
         }
-#endif
 
-#if ASYNC
         public async Task<GroupScheduleResponse> GetAllSchedulesAsync()
         {
             return await GenericGetAsync<GroupScheduleResponse>("business_hours/schedules.json");
@@ -166,6 +157,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericDeleteAsync($"business_hours/schedules/{scheduleId}/holidays/{holidayId}.json");
         }
-#endif
     }
 }

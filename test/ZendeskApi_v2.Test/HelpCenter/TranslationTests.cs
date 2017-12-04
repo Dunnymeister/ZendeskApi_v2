@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using System.ComponentModel;
+using System.Threading.Tasks;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Articles;
 using ZendeskApi_v2.Models.HelpCenter.Categories;
@@ -8,7 +9,7 @@ using ZendeskApi_v2.Models.Sections;
 
 namespace Tests.HelpCenter
 {
-    [TestFixture]
+
     [Category("HelpCenter")]
     public class TranslationTests
     {
@@ -16,27 +17,27 @@ namespace Tests.HelpCenter
         private long _articleId = 204838115; //https://csharpapi.zendesk.com/hc/en-us/articles/204838115-Thing-4?page=1#comment_200486479
         private long _sectionId = 201010935;
         private long _categoryId = 200382245;
-        [Test]
+        [Fact]
         public void CanListTranslations()
         {
             var res = api.HelpCenter.Translations.ListTranslationsForArticle(_articleId);
-            Assert.AreEqual(2, res.Count);
+            Assert.Equal(2, res.Count);
 
             res = api.HelpCenter.Translations.ListTranslationsForSection(_sectionId);
-            Assert.AreEqual(2, res.Count);
+            Assert.Equal(2, res.Count);
 
             res = api.HelpCenter.Translations.ListTranslationsForCategory(_categoryId);
-            Assert.AreEqual(2, res.Count);
+            Assert.Equal(2, res.Count);
         }
 
-        [Test]
+        [Fact]
         public void CanShowTranslationForArticle()
         {
             var res = api.HelpCenter.Translations.ShowTranslationForArticle(_articleId, "en-us");
-            Assert.AreEqual("en-us", res.Translation.Locale);
+            Assert.Equal("en-us", res.Translation.Locale);
         }
 
-        [Test]
+        [Fact]
         public void CanListMissingCreateUpdateAndDeleteTranslationsForArticle()
         {
             //create an article with en-us locale.
@@ -57,8 +58,8 @@ namespace Tests.HelpCenter
             var article_id = new_article_res.Article.Id.Value;
 
             var missing_res = api.HelpCenter.Translations.ListMissingTranslationsForArticle(article_id);
-            Assert.AreEqual(1, missing_res.Count);
-            Assert.AreEqual("fr", missing_res[0]);
+            Assert.Equal(1, missing_res.Count);
+            Assert.Equal("fr", missing_res[0]);
 
             var fr_translation = new Translation()
             {
@@ -69,23 +70,23 @@ namespace Tests.HelpCenter
 
             //create translation
             var add_res = api.HelpCenter.Translations.CreateArticleTranslation(article_id, fr_translation);
-            Assert.Greater(add_res.Translation.Id, 0);
+            Assert.True(add_res.Translation.Id > 0);
 
             add_res.Translation.Body = "insérer plus français ici .";
 
             //update translation
             var update_res = api.HelpCenter.Translations.UpdateArticleTranslation(add_res.Translation);
-            Assert.AreEqual("insérer plus français ici .", update_res.Translation.Body);
+            Assert.Equal("insérer plus français ici .", update_res.Translation.Body);
 
             //delete translation
-            Assert.IsTrue(api.HelpCenter.Translations.DeleteTranslation(update_res.Translation.Id.Value));
+            Assert.True(api.HelpCenter.Translations.DeleteTranslation(update_res.Translation.Id.Value));
 
             //teardown.
-            Assert.IsTrue(api.HelpCenter.Articles.DeleteArticle(article_id));
+            Assert.True(api.HelpCenter.Articles.DeleteArticle(article_id));
 
         }
 
-        [Test]
+        [Fact]
         public void CanListMissingCreateUpdateAndDeleteTranslationsForSection()
         {
             //create a section with en-us locale.
@@ -107,8 +108,8 @@ namespace Tests.HelpCenter
             var section_id = new_section_res.Section.Id.Value;
 
             var missing_res = api.HelpCenter.Translations.ListMissingTranslationsForSection(section_id);
-            Assert.AreEqual(1, missing_res.Count);
-            Assert.AreEqual("fr", missing_res[0]);
+            Assert.Equal(1, missing_res.Count);
+            Assert.Equal("fr", missing_res[0]);
 
             var fr_translation = new Translation()
             {
@@ -119,23 +120,23 @@ namespace Tests.HelpCenter
 
             //create translation
             var add_res = api.HelpCenter.Translations.CreateSectionTranslation(section_id, fr_translation);
-            Assert.Greater(add_res.Translation.Id, 0);
+            Assert.True(add_res.Translation.Id > 0);
 
             add_res.Translation.Body = "insérer plus français ici .";
 
             //update translation
             var update_res = api.HelpCenter.Translations.UpdateSectionTranslation(add_res.Translation);
-            Assert.AreEqual("insérer plus français ici .", update_res.Translation.Body);
+            Assert.Equal("insérer plus français ici .", update_res.Translation.Body);
 
             //delete translation
-            Assert.IsTrue(api.HelpCenter.Translations.DeleteTranslation(update_res.Translation.Id.Value));
+            Assert.True(api.HelpCenter.Translations.DeleteTranslation(update_res.Translation.Id.Value));
 
             //teardown.
-            Assert.IsTrue(api.HelpCenter.Sections.DeleteSection(section_id));
+            Assert.True(api.HelpCenter.Sections.DeleteSection(section_id));
 
         }
 
-        [Test]
+        [Fact]
         public void CanListMissingCreateUpdateAndDeleteTranslationsForCategory()
         {
             //create a category with en-us locale.
@@ -144,7 +145,6 @@ namespace Tests.HelpCenter
             //update translation and verify.
             //delete translation and verify.
             //delete new category.
-
 
             //prep
             var new_category_res = api.HelpCenter.Categories.CreateCategory(new ZendeskApi_v2.Models.HelpCenter.Categories.Category()
@@ -156,8 +156,8 @@ namespace Tests.HelpCenter
             var category_id = new_category_res.Category.Id.Value;
 
             var missing_res = api.HelpCenter.Translations.ListMissingTranslationsForCategory(category_id);
-            Assert.AreEqual(1, missing_res.Count);
-            Assert.AreEqual("fr", missing_res[0]);
+            Assert.Equal(1, missing_res.Count);
+            Assert.Equal("fr", missing_res[0]);
 
             var fr_translation = new Translation()
             {
@@ -168,23 +168,23 @@ namespace Tests.HelpCenter
 
             //create translation
             var add_res = api.HelpCenter.Translations.CreateCategoryTranslation(category_id, fr_translation);
-            Assert.Greater(add_res.Translation.Id, 0);
+            Assert.True(add_res.Translation.Id > 0);
 
             add_res.Translation.Body = "insérer plus français ici . (category)";
 
             //update translation
             var update_res = api.HelpCenter.Translations.UpdateCategoryTranslation(add_res.Translation);
-            Assert.AreEqual("insérer plus français ici . (category)", update_res.Translation.Body);
+            Assert.Equal("insérer plus français ici . (category)", update_res.Translation.Body);
 
             //delete translation
-            Assert.IsTrue(api.HelpCenter.Translations.DeleteTranslation(update_res.Translation.Id.Value));
+            Assert.True(api.HelpCenter.Translations.DeleteTranslation(update_res.Translation.Id.Value));
 
             //teardown.
-            Assert.IsTrue(api.HelpCenter.Categories.DeleteCategory(category_id));
+            Assert.True(api.HelpCenter.Categories.DeleteCategory(category_id));
 
         }
 
-        [Test]
+        [Fact]
         public void CanListAllEnabledLocales()
         {
             //the only two locales enabled on the test site are us-en and fr. us-en is the default.
@@ -192,36 +192,34 @@ namespace Tests.HelpCenter
             string default_locale;
             var res = api.HelpCenter.Translations.ListAllEnabledLocalesAndDefaultLocale(out default_locale);
 
-            Assert.AreEqual(default_locale, "en-us");
-            Assert.IsTrue(res.Contains("en-us"));
-            Assert.IsTrue(res.Contains("fr"));
+            Assert.Equal(default_locale, "en-us");
+            Assert.True(res.Contains("en-us"));
+            Assert.True(res.Contains("fr"));
         }
-
 
         //Async tests:
 
-
-        [Test]
+        [Fact]
         public async Task CanListTranslationsAsync()
         {
             var res = await api.HelpCenter.Translations.ListTranslationsForArticleAsync(_articleId);
-            Assert.That(res.Count, Is.EqualTo(2));
+            Assert.Equal(res.Count, 2);
 
             res = await api.HelpCenter.Translations.ListTranslationsForSectionAsync(_sectionId);
-            Assert.That(res.Count, Is.EqualTo(2));
+            Assert.Equal(res.Count, 2);
 
             res = await api.HelpCenter.Translations.ListTranslationsForCategoryAsync(_categoryId);
-            Assert.That(res.Count, Is.EqualTo(2));
+            Assert.Equal(res.Count, 2);
         }
 
-        [Test]
+        [Fact]
         public async Task CanShowTranslationForArticleAsync()
         {
             var res = await api.HelpCenter.Translations.ShowTranslationForArticleAsync(_articleId, "en-us");
-            Assert.That(res.Translation.Locale, Is.EqualTo("en-us"));
+            Assert.Equal(res.Translation.Locale, "en-us");
         }
 
-        [Test]
+        [Fact]
         public async Task CanListMissingCreateUpdateAndDeleteTranslationsForArticleAsync()
         {
             //create an article with en-us locale.
@@ -242,8 +240,8 @@ namespace Tests.HelpCenter
             var article_id = new_article_res.Article.Id.Value;
 
             var missing_res = await api.HelpCenter.Translations.ListMissingTranslationsForArticleAsync(article_id);
-            Assert.That(missing_res.Count, Is.EqualTo(1));
-            Assert.That(missing_res[0], Is.EqualTo("fr"));
+            Assert.Equal(missing_res.Count, 1);
+            Assert.Equal(missing_res[0], "fr");
 
             var fr_translation = new Translation()
             {
@@ -254,23 +252,23 @@ namespace Tests.HelpCenter
 
             //create translation
             var add_res = await api.HelpCenter.Translations.CreateArticleTranslationAsync(article_id, fr_translation);
-            Assert.That(add_res.Translation.Id, Is.GreaterThan(0));
+            Assert.True(add_res.Translation.Id > 0);
 
             add_res.Translation.Body = "insérer plus français ici .";
 
             //update translation
             var update_res = await api.HelpCenter.Translations.UpdateArticleTranslationAsync(add_res.Translation);
-            Assert.That(update_res.Translation.Body, Is.EqualTo("insérer plus français ici ."));
+            Assert.Equal(update_res.Translation.Body, "insérer plus français ici .");
 
             //delete translation
-            Assert.That(await api.HelpCenter.Translations.DeleteTranslationAsync(update_res.Translation.Id.Value), Is.True);
+            Assert.True(await api.HelpCenter.Translations.DeleteTranslationAsync(update_res.Translation.Id.Value));
 
             //tear-down.
-            Assert.That(await api.HelpCenter.Articles.DeleteArticleAsync(article_id), Is.True);
+            Assert.True(await api.HelpCenter.Articles.DeleteArticleAsync(article_id));
 
         }
 
-        [Test]
+        [Fact]
         public async Task CanListMissingCreateUpdateAndDeleteTranslationsForSectionAsync()
         {
             //create a section with en-us locale.
@@ -293,8 +291,8 @@ namespace Tests.HelpCenter
             var section_id = new_section_res.Section.Id.Value;
 
             var missing_res = await api.HelpCenter.Translations.ListMissingTranslationsForSectionAsync(section_id);
-            Assert.That(missing_res.Count, Is.EqualTo(1));
-            Assert.That(missing_res[0], Is.EqualTo("fr"));
+            Assert.Equal(missing_res.Count, 1);
+            Assert.Equal(missing_res[0], "fr");
 
             var fr_translation = new Translation
             {
@@ -305,22 +303,22 @@ namespace Tests.HelpCenter
 
             //create translation
             var add_res = await api.HelpCenter.Translations.CreateSectionTranslationAsync(section_id, fr_translation);
-            Assert.That(add_res.Translation.Id, Is.GreaterThan(0));
+            Assert.True(add_res.Translation.Id > 0);
 
             add_res.Translation.Body = "insérer plus français ici .";
 
             //update translation
             var update_res = await api.HelpCenter.Translations.UpdateSectionTranslationAsync(add_res.Translation);
-            Assert.That(update_res.Translation.Body, Is.EqualTo("insérer plus français ici ."));
+            Assert.Equal(update_res.Translation.Body, "insérer plus français ici .");
 
             //delete translation
-            Assert.That(await api.HelpCenter.Translations.DeleteTranslationAsync(update_res.Translation.Id.Value), Is.True);
+            Assert.True(await api.HelpCenter.Translations.DeleteTranslationAsync(update_res.Translation.Id.Value));
 
             //tear-down.
-            Assert.That(await api.HelpCenter.Sections.DeleteSectionAsync(section_id), Is.True);
+            Assert.True(await api.HelpCenter.Sections.DeleteSectionAsync(section_id));
         }
 
-        [Test]
+        [Fact]
         public async Task CanListMissingCreateUpdateAndDeleteTranslationsForCategoryAsync()
         {
             //create a category with en-us locale.
@@ -329,7 +327,6 @@ namespace Tests.HelpCenter
             //update translation and verify.
             //delete translation and verify.
             //delete new category.
-
 
             //prep
             var new_category_res = await api.HelpCenter.Categories.CreateCategoryAsync(new Category()
@@ -341,8 +338,8 @@ namespace Tests.HelpCenter
             var category_id = new_category_res.Category.Id.Value;
 
             var missing_res = await api.HelpCenter.Translations.ListMissingTranslationsForCategoryAsync(category_id);
-            Assert.That(missing_res.Count, Is.EqualTo(1));
-            Assert.That(missing_res[0], Is.EqualTo("fr"));
+            Assert.Equal(missing_res.Count, 1);
+            Assert.Equal(missing_res[0], "fr");
 
             var fr_translation = new Translation()
             {
@@ -353,31 +350,31 @@ namespace Tests.HelpCenter
 
             //create translation
             var add_res = await api.HelpCenter.Translations.CreateCategoryTranslationAsync(category_id, fr_translation);
-            Assert.That(add_res.Translation.Id, Is.GreaterThan(0));
+            Assert.True(add_res.Translation.Id > 0);
 
             add_res.Translation.Body = "insérer plus français ici . (category)";
 
             //update translation
             var update_res = await api.HelpCenter.Translations.UpdateCategoryTranslationAsync(add_res.Translation);
-            Assert.That(update_res.Translation.Body, Is.EqualTo("insérer plus français ici . (category)"));
+            Assert.Equal(update_res.Translation.Body, "insérer plus français ici . (category)");
 
             //delete translation
-            Assert.That(await api.HelpCenter.Translations.DeleteTranslationAsync(update_res.Translation.Id.Value), Is.True);
+            Assert.True(await api.HelpCenter.Translations.DeleteTranslationAsync(update_res.Translation.Id.Value));
 
             //tear-down.
-            Assert.That(await api.HelpCenter.Categories.DeleteCategoryAsync(category_id), Is.True);
+            Assert.True(await api.HelpCenter.Categories.DeleteCategoryAsync(category_id));
         }
 
-        [Test]
+        [Fact]
         public async Task CanListAllEnabledLocalesAsync()
         {
             //the only two locales enabled on the test site are us-en and fr. us-en is the default.
             //note: FR was already enabled in the Zendesk settings, however it had to be enabled again in the help center preferences.
             var res = await api.HelpCenter.Translations.ListAllEnabledLocalesAndDefaultLocaleAsync();
 
-            Assert.That(res.Item2, Is.EqualTo("en-us"));
-            Assert.That(res.Item1.Contains("en-us"), Is.True);
-            Assert.That(res.Item1.Contains("fr"), Is.True);
+            Assert.Equal(res.Item2, "en-us");
+            Assert.True(res.Item1.Contains("en-us"));
+            Assert.True(res.Item1.Contains("fr"));
         }
     }
 }

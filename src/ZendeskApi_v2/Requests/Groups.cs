@@ -1,13 +1,10 @@
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Groups;
 
 namespace ZendeskApi_v2.Requests
 {
 	public interface IGroups : ICore
 	{
-#if SYNC
 		MultipleGroupResponse GetGroups(int? perPage = null, int? page = null);
 		MultipleGroupResponse GetAssignableGroups();
 		IndividualGroupResponse GetGroupById(long id);
@@ -32,9 +29,7 @@ namespace ZendeskApi_v2.Requests
 		MultipleGroupMembershipResponse SetGroupMembershipAsDefault(long userId, long groupMembershipId);
 		bool DeleteGroupMembership(long groupMembershipId);
 		bool DeleteUserGroupMembership(long userId, long groupMembershipId);
-#endif
 
-#if ASYNC
 		Task<MultipleGroupResponse> GetGroupsAsync(int? perPage = null, int? page = null);
 		Task<MultipleGroupResponse> GetAssignableGroupsAsync();
 		Task<IndividualGroupResponse> GetGroupByIdAsync(long id);
@@ -59,7 +54,6 @@ namespace ZendeskApi_v2.Requests
 		Task<MultipleGroupMembershipResponse> SetGroupMembershipAsDefaultAsync(long userId, long groupMembershipId);
 		Task<bool> DeleteGroupMembershipAsync(long groupMembershipId);
 		Task<bool> DeleteUserGroupMembershipAsync(long userId, long groupMembershipId);
-#endif
 	}
 
 	public class Groups : Core, IGroups
@@ -69,7 +63,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public MultipleGroupResponse GetGroups(int? perPage = null, int? page = null)
         {
             return GenericPagedGet<MultipleGroupResponse>("groups.json", perPage, page);
@@ -164,9 +157,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericDelete($"users/{userId}/group_memberships/{groupMembershipId}.json");
         }
-#endif
 
-#if ASYNC
         public async Task<MultipleGroupResponse> GetGroupsAsync(int? perPage = null, int? page = null)
         {
             return await GenericPagedGetAsync<MultipleGroupResponse>("groups.json", perPage, page);
@@ -259,6 +250,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericDeleteAsync($"users/{userId}/group_memberships/{groupMembershipId}.json");
         }
-#endif
     }
 }

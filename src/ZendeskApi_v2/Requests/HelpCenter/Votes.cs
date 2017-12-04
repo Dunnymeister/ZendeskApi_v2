@@ -1,7 +1,5 @@
 ﻿using System;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.HelpCenter.Votes;
 
@@ -9,13 +7,9 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 {
 	public interface IVotes : ICore
 	{
-#if SYNC
 
 		GroupVoteResponse GetVotesForArticle(long? articleId);
-#endif
-#if ASYNC
 		Task<GroupVoteResponse> GetVotesForArticleAsync(long? articleId);
-#endif
 
 	}
 
@@ -26,21 +20,17 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 		{
 		}
 
-#if SYNC
 
 		public GroupVoteResponse GetVotesForArticle(long? articleId)
 		{ 
 			return GenericGet<GroupVoteResponse>($"help_center/articles/{articleId}/votes.json");
 		}
 		
-#endif
-#if ASYNC
 
 		public async Task<GroupVoteResponse> GetVotesForArticleAsync(long? articleId)
 		{
 			return await GenericGetAsync<GroupVoteResponse>($"help_center/articles/{articleId}/votes.json");
 		}
 
-#endif
 	}
 }

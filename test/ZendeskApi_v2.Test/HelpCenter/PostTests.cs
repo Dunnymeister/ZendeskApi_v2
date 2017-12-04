@@ -1,15 +1,17 @@
-﻿using NUnit.Framework;
+﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.HelpCenter.Post;
 
 namespace Tests.HelpCenter
 {
-    [TestFixture]
+
     [Category("HelpCenter")]
     public class PostTests
     {
@@ -27,47 +29,47 @@ namespace Tests.HelpCenter
             }
         }
 
-        [Test]
+        [Fact]
         public void CanGetPosts()
         {
             var res = api.HelpCenter.Posts.GetPosts();
-            Assert.That(res.Posts.Count, Is.GreaterThan(0));
+            Assert.True(res.Posts.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanCreatePost()
         {
             var post = new Post { Title = postTitile, Details = postDetails, TopicId = Settings.Topic_ID };
             var res = api.HelpCenter.Posts.CreatePost(post);
-            Assert.That(res?.Post, Is.Not.Null);
+            Assert.NotNull(res?.Post);
         }
 
-        [Test]
+        [Fact]
         public void CanDeletePost()
         {
             var post = new Post { Title = postTitile, Details = postDetails, TopicId = Settings.Topic_ID };
             var res = api.HelpCenter.Posts.CreatePost(post);
-            Assert.That(api.HelpCenter.Posts.DeletePost(res.Post.Id.Value), Is.True);
+            Assert.True(api.HelpCenter.Posts.DeletePost(res.Post.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanGetPost()
         {
             var post = new Post { Title = postTitile, Details = postDetails, TopicId = Settings.Topic_ID };
             var res = api.HelpCenter.Posts.CreatePost(post);
             var get = api.HelpCenter.Posts.GetPost(res.Post.Id.Value);
-            Assert.That(get.Post.Id, Is.EqualTo(res.Post.Id));
+            Assert.Equal(get.Post.Id, res.Post.Id);
         }
 
-        [Test]
+        [Fact]
         public void CanGetPostForTopicId()
         {
             var res = api.HelpCenter.Posts.GetPostsByTopicId(Settings.Topic_ID);
-            Assert.That(res.Posts, Is.Not.Null);
-            Assert.That(res.Posts.Count, Is.GreaterThan(0));
+            Assert.NotNull(res.Posts);
+            Assert.True(res.Posts.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanUpdatePost()
         {
             var updatedPostDetails = "This has been updated";
@@ -77,51 +79,51 @@ namespace Tests.HelpCenter
             res.Post.Details = updatedPostDetails;
             var updated = api.HelpCenter.Posts.UpdatePost(res.Post);
 
-            Assert.That(updated?.Post, Is.Not.Null);
-            Assert.That(updated.Post.Details, Is.EqualTo(updatedPostDetails));
+            Assert.NotNull(updated?.Post);
+            Assert.Equal(updated.Post.Details, updatedPostDetails);
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetPostsAsync()
         {
             var res = await api.HelpCenter.Posts.GetPostsAsync();
-            Assert.That(res.Posts.Count, Is.GreaterThan(0));
+            Assert.True(res.Posts.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public async Task CanCreatePostAsync()
         {
             var post = new Post { Title = postTitile, Details = postDetails, TopicId = Settings.Topic_ID };
             var res = await api.HelpCenter.Posts.CreatePostAsync(post);
-            Assert.That(res?.Post, Is.Not.Null);
+            Assert.NotNull(res?.Post);
         }
 
-        [Test]
+        [Fact]
         public async Task CanDeletePostAsync()
         {
             var post = new Post { Title = postTitile, Details = postDetails, TopicId = Settings.Topic_ID };
             var res = await api.HelpCenter.Posts.CreatePostAsync(post);
-            Assert.That( await api.HelpCenter.Posts.DeletePostAsync(res.Post.Id.Value), Is.True);
+            Assert.True( await api.HelpCenter.Posts.DeletePostAsync(res.Post.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetPostAsync()
         {
             var post = new Post { Title = postTitile, Details = postDetails, TopicId = Settings.Topic_ID };
             var res = await api.HelpCenter.Posts.CreatePostAsync(post);
             var get = await api.HelpCenter.Posts.GetPostAsync(res.Post.Id.Value);
-            Assert.That(get.Post.Id, Is.EqualTo(res.Post.Id));
+            Assert.Equal(get.Post.Id, res.Post.Id);
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetPostForTopicIdAsync()
         {
             var res = await api.HelpCenter.Posts.GetPostsByTopicIdAsync(Settings.Topic_ID);
-            Assert.That(res.Posts, Is.Not.Null);
-            Assert.That(res.Posts.Count, Is.GreaterThan(0));
+            Assert.NotNull(res.Posts);
+            Assert.True(res.Posts.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public async Task CanUpdatePostAsync()
         {
             var updatedPostDetails = "This has been updated";
@@ -131,8 +133,8 @@ namespace Tests.HelpCenter
             res.Post.Details = updatedPostDetails;
             var updated = await api.HelpCenter.Posts.UpdatePostAsync(res.Post);
 
-            Assert.That(updated?.Post, Is.Not.Null);
-            Assert.That(updated.Post.Details, Is.EqualTo(updatedPostDetails));
+            Assert.NotNull(updated?.Post);
+            Assert.Equal(updated.Post.Details, updatedPostDetails);
         }
     }
 }

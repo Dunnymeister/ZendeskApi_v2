@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Net;
 
-#if ASYNC
 
 using System.Threading.Tasks;
 
-#endif
 
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.Requests;
@@ -33,7 +31,6 @@ namespace ZendeskApi_v2.Requests
 
     public interface ITickets : ICore
     {
-#if SYNC
 
         GroupTicketFormResponse GetTicketForms();
 
@@ -151,9 +148,7 @@ namespace ZendeskApi_v2.Requests
 
         JobStatusResponse BulkImportTickets(IEnumerable<TicketImport> tickets);
 
-#endif
 
-#if ASYNC
 
         Task<GroupTicketResponse> GetAllTicketsAsync(int? perPage = null, int? page = null, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None);
 
@@ -259,7 +254,6 @@ namespace ZendeskApi_v2.Requests
 
         Task<JobStatusResponse> BulkImportTicketsAsync(IEnumerable<TicketImport> tickets);
 
-#endif
     }
 
     public class Tickets : Core, ITickets
@@ -278,7 +272,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
 
         public GroupTicketFormResponse GetTicketForms()
         {
@@ -647,9 +640,7 @@ namespace ZendeskApi_v2.Requests
 
         #endregion TicketMetrics
 
-#endif
 
-#if ASYNC
 
         public async Task<GroupTicketResponse> GetAllTicketsAsync(int? perPage = null, int? page = null, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None)
         {
@@ -956,7 +947,6 @@ namespace ZendeskApi_v2.Requests
 
         #endregion TicketMetrics
 
-#endif
 
         private string GetResourceStringWithSideLoadOptionsParam(string resource, TicketSideLoadOptionsEnum sideLoadOptions)
         {

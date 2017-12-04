@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.Views;
 using ZendeskApi_v2.Models.Views.Executed;
@@ -12,7 +10,6 @@ namespace ZendeskApi_v2.Requests
 {
 	public interface IViews : ICore
 	{
-#if SYNC
 		GroupViewResponse GetAllViews();
 		GroupViewResponse GetActiveViews();
 		GroupViewResponse GetCompactViews();
@@ -21,9 +18,7 @@ namespace ZendeskApi_v2.Requests
 		ExecutedViewResponse PreviewView(PreviewViewRequest preview);
 		GroupViewCountResponse GetViewCounts(IEnumerable<long> viewIds);
 		IndividualViewCountResponse GetViewCount(long viewId);
-#endif
 		
-#if ASYNC
 		Task<GroupViewResponse> GetAllViewsAsync();
 		Task<GroupViewResponse> GetActiveViewsAsync();
 		Task<GroupViewResponse> GetCompactViewsAsync();
@@ -32,7 +27,6 @@ namespace ZendeskApi_v2.Requests
 		Task<ExecutedViewResponse> PreviewViewAsync(PreviewViewRequest preview);
 		Task<GroupViewCountResponse> GetViewCountsAsync(IEnumerable<long> viewIds);
 		Task<IndividualViewCountResponse> GetViewCountAsync(long viewId);
-#endif
 	}
 
 	public class Views : Core, IViews
@@ -43,7 +37,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public GroupViewResponse GetAllViews()
         {            
             return GenericGet<GroupViewResponse>("views.json");
@@ -85,9 +78,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericGet<IndividualViewCountResponse>($"views/{viewId}/count.json");
         }
-#endif
 
-#if ASYNC
         public async Task<GroupViewResponse> GetAllViewsAsync()
         {
             return await GenericGetAsync<GroupViewResponse>("views.json");
@@ -129,6 +120,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericGetAsync<IndividualViewCountResponse>($"views/{viewId}/count.json");
         }
-#endif
     }
 }

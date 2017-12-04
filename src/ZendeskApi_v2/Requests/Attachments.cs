@@ -6,9 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.HelpCenter.Attachments;
 using ZendeskApi_v2.Models.Shared;
@@ -17,14 +15,11 @@ namespace ZendeskApi_v2.Requests
 {
     public interface IAttachments : ICore
     {
-#if SYNC
         GroupAttachmentResponse GetAttachmentsFromArticle(long? articleId);
         Upload UploadAttachment(ZenFile file, int? timeout = null);
         Upload UploadAttachments(IEnumerable<ZenFile> files, int? timeout = null);
         bool DeleteUpload(Upload upload);
-#endif
 
-#if ASYNC
         /// <summary>
         /// Uploads a file to zendesk and returns the corresponding token id.
         /// To upload another file to an existing token just pass in the existing token.
@@ -38,7 +33,6 @@ namespace ZendeskApi_v2.Requests
         Task<bool> DeleteUploadAsync(Upload upload);
         Task<ZenFile> DownloadAttachmentAsync(Attachment attachment);
 
-#endif
     }
 
     public class Attachments : Core, IAttachments
@@ -46,7 +40,6 @@ namespace ZendeskApi_v2.Requests
         public Attachments(string yourZendeskUrl, string user, string password, string apiToken, string p_OAuthToken)
             : base(yourZendeskUrl, user, password, apiToken, p_OAuthToken)
         { }
-#if SYNC
 
         public GroupAttachmentResponse GetAttachmentsFromArticle(long? articleId)
         {
@@ -104,9 +97,7 @@ namespace ZendeskApi_v2.Requests
         {
             return (upload?.Token == null ? false : GenericDelete($"/uploads/{upload.Token}.json"));
         }
-#endif
 
-#if ASYNC
         public async Task<Upload> UploadAttachmentAsync(ZenFile file, int? timeout = null)
         {
             return await UploadAttachmentAsync(file, "", timeout);
@@ -175,7 +166,6 @@ namespace ZendeskApi_v2.Requests
             return file;
         }
 
-#endif
 
 
     }

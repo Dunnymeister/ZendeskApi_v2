@@ -1,30 +1,32 @@
-﻿using NUnit.Framework;
+﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Articles;
 using ZendeskApi_v2.Models.Shared;
 
 namespace Tests.HelpCenter
 {
-    [TestFixture]
+
     [Category("HelpCenter")]
     public class ArticleAttachmentsTest
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
 
-        [Test]
+        [Fact]
         public void CanGetAttachmentsForArticle()
         {
             var res = api.HelpCenter.ArticleAttachments.GetAttachments(204838115);
-            Assert.That(res.Attachments, Is.Not.Null);
+            Assert.NotNull(res.Attachments);
         }
 
-        [Test]
+        [Fact]
         public void CanUploadAttachmentsForArticle()
         {
             var file = new ZenFile()
@@ -44,20 +46,19 @@ namespace Tests.HelpCenter
 
             var resp = api.HelpCenter.ArticleAttachments.UploadAttchment(articleResponse.Article.Id, file);
 
-            Assert.That(resp.Attachment, Is.Not.Null);
-            Assert.That(api.HelpCenter.ArticleAttachments.DeleteAttchment(resp.Attachment.Id), Is.True);
-            Assert.That(api.HelpCenter.Articles.DeleteArticle(articleResponse.Article.Id.Value), Is.True);
+            Assert.NotNull(resp.Attachment);
+            Assert.True(api.HelpCenter.ArticleAttachments.DeleteAttchment(resp.Attachment.Id));
+            Assert.True(api.HelpCenter.Articles.DeleteArticle(articleResponse.Article.Id.Value));
         }
 
-
-        [Test]
+        [Fact]
         public async Task CanGetAttachmentsForArticleAsync()
         {
             var res = await api.HelpCenter.ArticleAttachments.GetAttachmentsAsync(204838115);
-            Assert.That(res.Attachments, Is.Not.Null);
+            Assert.NotNull(res.Attachments);
         }
 
-        [Test]
+        [Fact]
         public async Task CanUploadAttachmentsForArticleAsync()
         {
             var file = new ZenFile()
@@ -77,11 +78,11 @@ namespace Tests.HelpCenter
 
             var resp = await api.HelpCenter.ArticleAttachments.UploadAttchmentAsync(articleResponse.Article.Id, file, true);
 
-            Assert.That(resp.Attachment, Is.Not.Null);
-            Assert.That(resp.Attachment.Inline, Is.True);
+            Assert.NotNull(resp.Attachment);
+            Assert.True(resp.Attachment.Inline);
 
-            Assert.That(await api.HelpCenter.ArticleAttachments.DeleteAttchmentAsync(resp.Attachment.Id), Is.True);
-            Assert.That(await api.HelpCenter.Articles.DeleteArticleAsync(articleResponse.Article.Id.Value), Is.True);
+            Assert.True(await api.HelpCenter.ArticleAttachments.DeleteAttchmentAsync(resp.Attachment.Id));
+            Assert.True(await api.HelpCenter.Articles.DeleteArticleAsync(articleResponse.Article.Id.Value));
         }
     }
 }

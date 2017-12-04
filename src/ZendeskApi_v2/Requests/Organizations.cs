@@ -1,6 +1,4 @@
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using System.Collections.Generic;
 using System.Linq;
 using ZendeskApi_v2.Extensions;
@@ -11,7 +9,6 @@ namespace ZendeskApi_v2.Requests
 {
     public interface IOrganizations : ICore
     {
-#if SYNC
         GroupOrganizationResponse GetOrganizations(int? perPage = null, int? page = null);
 
         /// <summary>
@@ -40,9 +37,7 @@ namespace ZendeskApi_v2.Requests
         bool DeleteOrganizationMembership(long id, long userId);
         JobStatusResponse DestroyManyOrganizationMemberships(IEnumerable<long> ids);
         GroupOrganizationMembershipResponse SetOrganizationMembershipAsDefault(long id, long userId);
-#endif
 
-#if ASYNC
         Task<GroupOrganizationResponse> GetOrganizationsAsync(int? perPage = null, int? page = null);
 
         /// <summary>
@@ -72,7 +67,6 @@ namespace ZendeskApi_v2.Requests
         Task<bool> DeleteOrganizationMembershipAsync(long id, long userId);
         Task<JobStatusResponse> DestroyManyOrganizationMembershipsAsync(IEnumerable<long> ids);
         Task<GroupOrganizationMembershipResponse> SetOrganizationMembershipAsDefaultAsync(long id, long userId);
-#endif
     }
 
     public class Organizations : Core, IOrganizations
@@ -82,7 +76,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public GroupOrganizationResponse GetOrganizations(int? perPage = null, int? page = null)
         {
             return GenericPagedGet<GroupOrganizationResponse>("organizations.json", perPage, page);
@@ -192,9 +185,7 @@ namespace ZendeskApi_v2.Requests
             return GenericPut<GroupOrganizationMembershipResponse>($"users/{userId}/organization_memberships/{id}/make_default.json");
         }
 
-#endif
 
-#if ASYNC
 
         public async Task<GroupOrganizationResponse> GetOrganizationsAsync(int? perPage = null, int? page = null)
         {
@@ -306,6 +297,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericPutAsync<GroupOrganizationMembershipResponse>($"users/{userId}/organization_memberships/{id}/make_default.json");
         }
-#endif
     }
 }

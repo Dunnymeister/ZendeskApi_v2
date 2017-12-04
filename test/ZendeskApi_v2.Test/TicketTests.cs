@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.Constants;
@@ -17,7 +18,7 @@ using ZendeskApi_v2.Models.Brands;
 
 namespace Tests
 {
-    [TestFixture]
+
     [Category("Tickets")]
     public class TicketTests
     {
@@ -37,23 +38,23 @@ namespace Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsAsync()
         {
             var tickets = api.Tickets.GetAllTicketsAsync();
             Assert.True(tickets.Result.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsAsyncWithSideLoad()
         {
             var tickets = api.Tickets.GetAllTicketsAsync(sideLoadOptions: ticketSideLoadOptions);
             Assert.True(tickets.Result.Count > 0);
-            Assert.IsTrue(tickets.Result.Users.Any());
-            Assert.IsTrue(tickets.Result.Organizations.Any());
+            Assert.True(tickets.Result.Users.Any());
+            Assert.True(tickets.Result.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanCanGetTicketsByOrganizationIDAsync()
         {
             var id = Settings.OrganizationId;
@@ -61,7 +62,7 @@ namespace Tests
             Assert.True(tickets.Result.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTickets()
         {
             var tickets = api.Tickets.GetAllTickets();
@@ -69,34 +70,34 @@ namespace Tests
 
             var count = 50;
             var nextPage = api.Tickets.GetByPageUrl<GroupTicketResponse>(tickets.NextPage, count);
-            Assert.AreEqual(nextPage.Tickets.Count, count);
+            Assert.Equal(nextPage.Tickets.Count, count);
 
             var ticketsByUser = api.Tickets.GetTicketsByUserID(tickets.Tickets[0].RequesterId.Value);
             Assert.True(ticketsByUser.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsWithSideLoad()
         {
             var tickets = api.Tickets.GetAllTickets(sideLoadOptions: ticketSideLoadOptions);
             Assert.True(tickets.Count > 0);
-            Assert.IsTrue(tickets.Users.Any());
-            Assert.IsTrue(tickets.Organizations.Any());
+            Assert.True(tickets.Users.Any());
+            Assert.True(tickets.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsPaged()
         {
             const int count = 50;
             var tickets = api.Tickets.GetAllTickets(count);
 
-            Assert.AreEqual(count, tickets.Tickets.Count);  // 50
-            Assert.AreNotEqual(tickets.Count, tickets.Tickets.Count);   // 50 != total count of tickets (assumption)
+            Assert.Equal(count, tickets.Tickets.Count);  // 50
+            Assert.NotEqual(tickets.Count, tickets.Tickets.Count);   // 50 != total count of tickets (assumption)
 
             const int page = 3;
             var thirdPage = api.Tickets.GetAllTickets(count, page);
 
-            Assert.AreEqual(count, thirdPage.Tickets.Count);
+            Assert.Equal(count, thirdPage.Tickets.Count);
 
             var nextPage = thirdPage.NextPage.GetQueryStringDict()
                     .Where(x => x.Key == "page")
@@ -105,31 +106,31 @@ namespace Tests
 
             Assert.NotNull(nextPage);
 
-            Assert.AreEqual(nextPage, (page + 1).ToString());
+            Assert.Equal(nextPage, (page + 1).ToString());
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketById()
         {
             var id = Settings.SampleTicketId;
             var ticket = api.Tickets.GetTicket(id).Ticket;
             Assert.NotNull(ticket);
-            Assert.AreEqual(ticket.Id, id);
+            Assert.Equal(ticket.Id, id);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketByIdWithSideLoad()
         {
             var id = Settings.SampleTicketId;
             var ticket = api.Tickets.GetTicket(id, sideLoadOptions: ticketSideLoadOptions);
             Assert.NotNull(ticket);
             Assert.NotNull(ticket.Ticket);
-            Assert.AreEqual(ticket.Ticket.Id, id);
-            Assert.IsTrue(ticket.Users.Any());
-            Assert.IsTrue(ticket.Organizations.Any());
+            Assert.Equal(ticket.Ticket.Id, id);
+            Assert.True(ticket.Users.Any());
+            Assert.True(ticket.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsByOrganizationId()
         {
             var id = Settings.OrganizationId;
@@ -137,15 +138,15 @@ namespace Tests
             Assert.True(tickets.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsByOrganizationIdPaged()
         {
             var id = Settings.OrganizationId;
             var ticketsRes = api.Tickets.GetTicketsByOrganizationID(id, 2, 3);
 
-            Assert.AreEqual(3, ticketsRes.PageSize);
-            Assert.AreEqual(3, ticketsRes.Tickets.Count);
-            Assert.Greater(ticketsRes.Count, 0);
+            Assert.Equal(3, ticketsRes.PageSize);
+            Assert.Equal(3, ticketsRes.Tickets.Count);
+            Assert.True(ticketsRes.Count > 0);
 
             var nextPage = ticketsRes.NextPage.GetQueryStringDict()
                     .Where(x => x.Key == "page")
@@ -154,17 +155,17 @@ namespace Tests
 
             Assert.NotNull(nextPage);
 
-            Assert.AreEqual("3", nextPage);
+            Assert.Equal("3", nextPage);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsByViewIdPaged()
         {
             var ticketsRes = api.Tickets.GetTicketsByViewID(Settings.ViewId, 10, 2);
 
-            Assert.AreEqual(10, ticketsRes.PageSize);
-            Assert.AreEqual(10, ticketsRes.Tickets.Count);
-            Assert.Greater(ticketsRes.Count, 0);
+            Assert.Equal(10, ticketsRes.PageSize);
+            Assert.Equal(10, ticketsRes.Tickets.Count);
+            Assert.True(ticketsRes.Count > 0);
 
             var nextPage = ticketsRes.NextPage.GetQueryStringDict()
                     .Where(x => x.Key == "page")
@@ -173,27 +174,27 @@ namespace Tests
 
             Assert.NotNull(nextPage);
 
-            Assert.AreEqual("3", nextPage);
+            Assert.Equal("3", nextPage);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsByViewIdPagedWithSideLoad()
         {
             CanGetTicketsByViewIdPaged();
             var ticketsRes = api.Tickets.GetTicketsByViewID(Settings.ViewId, 10, 2, sideLoadOptions: ticketSideLoadOptions);
 
-            Assert.IsTrue(ticketsRes.Users.Any());
-            Assert.IsTrue(ticketsRes.Users.Any());
+            Assert.True(ticketsRes.Users.Any());
+            Assert.True(ticketsRes.Users.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanTicketsByUserIdPaged()
         {
             var ticketsRes = api.Tickets.GetTicketsByUserID(Settings.UserId, 5, 2);
 
-            Assert.AreEqual(5, ticketsRes.PageSize);
-            Assert.AreEqual(5, ticketsRes.Tickets.Count);
-            Assert.Greater(ticketsRes.Count, 0);
+            Assert.Equal(5, ticketsRes.PageSize);
+            Assert.Equal(5, ticketsRes.Tickets.Count);
+            Assert.True(ticketsRes.Count > 0);
 
             var nextPage = ticketsRes.NextPage.GetQueryStringDict()
                     .Where(x => x.Key == "page")
@@ -202,34 +203,34 @@ namespace Tests
 
             Assert.NotNull(nextPage);
 
-            Assert.AreEqual("3", nextPage);
+            Assert.Equal("3", nextPage);
         }
 
-        [Test]
+        [Fact]
         public void CanTicketsByUserIdPagedWithSideLoad()
         {
             CanTicketsByUserIdPaged();
             var ticketsRes = api.Tickets.GetTicketsByUserID(Settings.UserId, 5, 2, sideLoadOptions: ticketSideLoadOptions);
-            Assert.IsTrue(ticketsRes.Users.Any());
-            Assert.IsTrue(ticketsRes.Organizations.Any());
+            Assert.True(ticketsRes.Users.Any());
+            Assert.True(ticketsRes.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanTicketsByUserIdPagedAsyncWithSideLoad()
         {
             var ticketsRes = api.Tickets.GetTicketsByUserIDAsync(Settings.UserId, 5, 2, sideLoadOptions: ticketSideLoadOptions);
-            Assert.IsTrue(ticketsRes.Result.Users.Any());
-            Assert.IsTrue(ticketsRes.Result.Organizations.Any());
+            Assert.True(ticketsRes.Result.Users.Any());
+            Assert.True(ticketsRes.Result.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanAssignedTicketsByUserIdPaged()
         {
             var ticketsRes = api.Tickets.GetAssignedTicketsByUserID(Settings.UserId, 5, 2);
 
-            Assert.AreEqual(5, ticketsRes.PageSize);
-            Assert.AreEqual(5, ticketsRes.Tickets.Count);
-            Assert.Greater(ticketsRes.Count, 0);
+            Assert.Equal(5, ticketsRes.PageSize);
+            Assert.Equal(5, ticketsRes.Tickets.Count);
+            Assert.True(ticketsRes.Count > 0);
 
             var nextPage = ticketsRes.NextPage.GetQueryStringDict()
                     .Where(x => x.Key == "page")
@@ -238,85 +239,85 @@ namespace Tests
 
             Assert.NotNull(nextPage);
 
-            Assert.AreEqual("3", nextPage);
+            Assert.Equal("3", nextPage);
         }
 
-        [Test]
+        [Fact]
         public void CanAssignedTicketsByUserIdPagedWithSideLoad()
         {
             CanTicketsByUserIdPaged();
             var ticketsRes = api.Tickets.GetAssignedTicketsByUserID(Settings.UserId, 5, 2, sideLoadOptions: ticketSideLoadOptions);
-            Assert.IsTrue(ticketsRes.Users.Any());
-            Assert.IsTrue(ticketsRes.Organizations.Any());
+            Assert.True(ticketsRes.Users.Any());
+            Assert.True(ticketsRes.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanAssignedTicketsByUserIdPagedAsyncWithSideLoad()
         {
             var ticketsRes = api.Tickets.GetAssignedTicketsByUserIDAsync(Settings.UserId, 5, 2, sideLoadOptions: ticketSideLoadOptions);
-            Assert.IsTrue(ticketsRes.Result.Users.Any());
-            Assert.IsTrue(ticketsRes.Result.Organizations.Any());
+            Assert.True(ticketsRes.Result.Users.Any());
+            Assert.True(ticketsRes.Result.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanGetMultipleTickets()
         {
             var ids = new List<long>() { Settings.SampleTicketId, Settings.SampleTicketId2 };
             var tickets = api.Tickets.GetMultipleTickets(ids);
             Assert.NotNull(tickets);
-            Assert.AreEqual(tickets.Count, ids.Count);
+            Assert.Equal(tickets.Count, ids.Count);
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetMultipleTicketsAsync()
         {
             var ids = new List<long>() { Settings.SampleTicketId, Settings.SampleTicketId2 };
             var tickets = await api.Tickets.GetMultipleTicketsAsync(ids);
             Assert.NotNull(tickets);
-            Assert.AreEqual(tickets.Count, ids.Count);
+            Assert.Equal(tickets.Count, ids.Count);
         }
 
-        [Test]
+        [Fact]
         public void CanGetMultipleTicketsWithSideLoad()
         {
             var ids = new List<long>() { Settings.SampleTicketId, Settings.SampleTicketId2 };
             var tickets = api.Tickets.GetMultipleTickets(ids, sideLoadOptions: ticketSideLoadOptions);
             Assert.NotNull(tickets);
-            Assert.AreEqual(tickets.Count, ids.Count);
-            Assert.IsTrue(tickets.Users.Any());
-            Assert.IsTrue(tickets.Organizations.Any());
+            Assert.Equal(tickets.Count, ids.Count);
+            Assert.True(tickets.Users.Any());
+            Assert.True(tickets.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetMultipleTicketsAsyncWithSideLoad()
         {
             var ids = new List<long>() { Settings.SampleTicketId, Settings.SampleTicketId2 };
             var tickets = await api.Tickets.GetMultipleTicketsAsync(ids, sideLoadOptions: ticketSideLoadOptions);
             Assert.NotNull(tickets);
-            Assert.AreEqual(tickets.Count, ids.Count);
-            Assert.IsTrue(tickets.Users.Any());
-            Assert.IsTrue(tickets.Organizations.Any());
+            Assert.Equal(tickets.Count, ids.Count);
+            Assert.True(tickets.Users.Any());
+            Assert.True(tickets.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanGetMultipleTicketsSingleTicket()
         {
             var ids = new List<long>() { Settings.SampleTicketId };
             var tickets = api.Tickets.GetMultipleTickets(ids);
             Assert.NotNull(tickets);
-            Assert.AreEqual(tickets.Count, ids.Count);
+            Assert.Equal(tickets.Count, ids.Count);
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetMultipleTicketsAsyncSingleTicket()
         {
             var ids = new List<long>() { Settings.SampleTicketId };
             var tickets = await api.Tickets.GetMultipleTicketsAsync(ids);
             Assert.NotNull(tickets);
-            Assert.AreEqual(tickets.Count, ids.Count);
+            Assert.Equal(tickets.Count, ids.Count);
         }
 
-        [Test]
+        [Fact]
         public void BooleanCustomFieldValuesArePreservedOnUpdate()
         {
             var ticket = new Ticket()
@@ -341,7 +342,7 @@ namespace Tests
                 };
 
             var res = api.Tickets.CreateTicket(ticket).Ticket;
-            Assert.AreEqual(ticket.CustomFields[1].Value, res.CustomFields.Where(f => f.Id == Settings.CustomBoolFieldId).FirstOrDefault().Value);
+            Assert.Equal(ticket.CustomFields[1].Value, res.CustomFields.Where(f => f.Id == Settings.CustomBoolFieldId).FirstOrDefault().Value);
 
             //var updateResponse = api.Tickets.UpdateTicket(res, new Comment() { Body = "Just trying to update it!", Public = true});
             //res.UpdatedAt = null;
@@ -349,12 +350,12 @@ namespace Tests
 
             var updateResponse = api.Tickets.UpdateTicket(res, new Comment() { Body = "Just trying to update it!", Public = true });
 
-            Assert.AreEqual(ticket.CustomFields[1].Value, updateResponse.Ticket.CustomFields[1].Value);
+            Assert.Equal(ticket.CustomFields[1].Value, updateResponse.Ticket.CustomFields[1].Value);
 
             Assert.True(api.Tickets.Delete(res.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteTicket()
         {
             var ticket = new Ticket()
@@ -376,10 +377,10 @@ namespace Tests
             var res = api.Tickets.CreateTicket(ticket).Ticket;
 
             Assert.NotNull(res);
-            Assert.Greater(res.Id, 0);
+            Assert.True(res.Id > 0);
 
-            Assert.AreEqual(res.CreatedAt, res.UpdatedAt);
-            Assert.LessOrEqual(res.CreatedAt - DateTimeOffset.UtcNow, TimeSpan.FromMinutes(1.0));
+            Assert.Equal(res.CreatedAt, res.UpdatedAt);
+            Assert.True(res.CreatedAt - DateTimeOffset.UtcNow <= TimeSpan.FromMinutes(1.0));
 
             res.Status = TicketStatus.Solved;
             res.AssigneeId = Settings.UserId;
@@ -392,14 +393,14 @@ namespace Tests
             var updateResponse = api.Tickets.UpdateTicket(res, new Comment() { Body = body, Public = true, Uploads = new List<string>() });
 
             Assert.NotNull(updateResponse);
-            //Assert.AreEqual(updateResponse.Audit.Events.First().Body, body);
-            Assert.Greater(updateResponse.Ticket.CollaboratorIds.Count, 0);
-            Assert.GreaterOrEqual(updateResponse.Ticket.UpdatedAt, updateResponse.Ticket.CreatedAt);
+            //Assert.Equal(updateResponse.Audit.Events.First().Body, body);
+            Assert.True(updateResponse.Ticket.CollaboratorIds.Count > 0);
+            Assert.True(updateResponse.Ticket.UpdatedAt >= updateResponse.Ticket.CreatedAt);
 
             Assert.True(api.Tickets.Delete(res.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteHTMLTicket()
         {
             var ticket = new Ticket()
@@ -421,9 +422,9 @@ namespace Tests
             var res = api.Tickets.CreateTicket(ticket).Ticket;
 
             Assert.NotNull(res);
-            Assert.Greater(res.Id, 0);
+            Assert.True(res.Id > 0);
 
-            Assert.AreEqual(res.CreatedAt, res.UpdatedAt);
+            Assert.Equal(res.CreatedAt, res.UpdatedAt);
             Assert.LessOrEqual(res.CreatedAt - DateTimeOffset.UtcNow, TimeSpan.FromMinutes(1.0));
 
             res.Status = TicketStatus.Solved;
@@ -437,47 +438,47 @@ namespace Tests
             var updateResponse = api.Tickets.UpdateTicket(res, new Comment() { HtmlBody = htmlBody, Public = true, Uploads = new List<string>() });
 
             Assert.NotNull(updateResponse);
-            //Assert.AreEqual(updateResponse.Audit.Events.First().Body, body);
-            Assert.Greater(updateResponse.Ticket.CollaboratorIds.Count, 0);
+            //Assert.Equal(updateResponse.Audit.Events.First().Body, body);
+            Assert.True(updateResponse.Ticket.CollaboratorIds.Count > 0);
             Assert.GreaterOrEqual(updateResponse.Ticket.UpdatedAt, updateResponse.Ticket.CreatedAt);
 
             Assert.True(api.Tickets.Delete(res.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketComments()
         {
             var comments = api.Tickets.GetTicketComments(2);
-            Assert.IsNotEmpty(comments.Comments[1].Body);
+            Assert.NotEmpty(comments.Comments[1].Body);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketHTMLComments()
         {
             var comments = api.Tickets.GetTicketComments(2);
-            Assert.IsNotEmpty(comments.Comments[1].HtmlBody);
+            Assert.NotEmpty(comments.Comments[1].HtmlBody);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketCommentsWithSideLoading()
         {
             var comments = api.Tickets.GetTicketComments(2, sideLoadOptions: ticketSideLoadOptions);
-            Assert.IsNotEmpty(comments.Users);
-            Assert.IsNull(comments.Organizations);
+            Assert.NotEmpty(comments.Users);
+            Assert.Null(comments.Organizations);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketCommentsPaged()
         {
             const int perPage = 5;
             const int page = 2;
             var commentsRes = api.Tickets.GetTicketComments(2, perPage, page);
 
-            Assert.AreEqual(perPage, commentsRes.Comments.Count);
-            Assert.AreEqual(perPage, commentsRes.PageSize);
-            Assert.AreEqual(page, commentsRes.Page);
+            Assert.Equal(perPage, commentsRes.Comments.Count);
+            Assert.Equal(perPage, commentsRes.PageSize);
+            Assert.Equal(page, commentsRes.Page);
 
-            Assert.IsNotEmpty(commentsRes.Comments[1].Body);
+            Assert.NotEmpty(commentsRes.Comments[1].Body);
 
             var nextPageValue = commentsRes.NextPage.GetQueryStringDict()
                     .Where(x => x.Key == "page")
@@ -486,10 +487,10 @@ namespace Tests
 
             Assert.NotNull(nextPageValue);
 
-            Assert.AreEqual((page + 1).ToString(), nextPageValue);
+            Assert.Equal((page + 1).ToString(), nextPageValue);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateTicketWithRequester()
         {
             var ticket = new Ticket()
@@ -503,12 +504,12 @@ namespace Tests
             var res = api.Tickets.CreateTicket(ticket).Ticket;
 
             Assert.NotNull(res);
-            Assert.AreEqual(res.RequesterId, Settings.CollaboratorId);
+            Assert.Equal(res.RequesterId, Settings.CollaboratorId);
 
             Assert.True(api.Tickets.Delete(res.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public async Task CanCreateTicketWithRequesterAsync()
         {
             var ticket = new Ticket()
@@ -523,12 +524,12 @@ namespace Tests
 
             Assert.NotNull(res);
             Assert.NotNull(res.Ticket);
-            Assert.AreEqual(res.Ticket.RequesterId, Settings.CollaboratorId);
+            Assert.Equal(res.Ticket.RequesterId, Settings.CollaboratorId);
 
             Assert.True(api.Tickets.Delete(res.Ticket.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateTicketWithDueDate()
         {
             //31 December 2020 2AM
@@ -545,13 +546,13 @@ namespace Tests
 
             var res = api.Tickets.CreateTicket(ticket).Ticket;
 
-            Assert.That(res, Is.Not.Null);
-            Assert.That(res.DueAt, Is.EqualTo(dueAt));
+            Assert.NotNull(res);
+            Assert.Equal(res.DueAt, dueAt);
 
             Assert.True(api.Tickets.Delete(res.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateTicketWithTicketFormId()
         {
             var ticket = new Ticket()
@@ -565,12 +566,12 @@ namespace Tests
             var res = api.Tickets.CreateTicket(ticket).Ticket;
 
             Assert.NotNull(res);
-            Assert.AreEqual(Settings.TicketFormId, res.TicketFormId);
+            Assert.Equal(Settings.TicketFormId, res.TicketFormId);
 
             Assert.True(api.Tickets.Delete(res.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanBulkUpdateTickets()
         {
             var t1 = api.Tickets.CreateTicket(new Ticket()
@@ -594,16 +595,16 @@ namespace Tests
                 AssigneeId = Settings.UserId
             });
 
-            Assert.AreEqual(res.JobStatus.Status, "queued");
+            Assert.Equal(res.JobStatus.Status, "queued");
 
             //also test JobStatuses while we have a job here
             var job = api.JobStatuses.GetJobStatus(res.JobStatus.Id);
-            Assert.AreEqual(job.JobStatus.Id, res.JobStatus.Id);
+            Assert.Equal(job.JobStatus.Id, res.JobStatus.Id);
 
             Assert.True(api.Tickets.DeleteMultiple(new List<long>() { t1.Id.Value, t2.Id.Value }));
         }
 
-        [Test]
+        [Fact]
         public async Task CanAddAttachmentToTicketAsync()
         {
             var res = await api.Attachments.UploadAttachmentAsync(new ZenFile()
@@ -627,12 +628,12 @@ namespace Tests
 
             var t1 = await api.Tickets.CreateTicketAsync(ticket);
 
-            Assert.AreEqual(t1.Audit.Events.First().Attachments.Count, 1);
+            Assert.Equal(t1.Audit.Events.First().Attachments.Count, 1);
 
             Assert.True(await api.Tickets.DeleteAsync(t1.Ticket.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanAddAttachmentToTicket()
         {
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "testupload.txt");
@@ -657,20 +658,20 @@ namespace Tests
             };
 
             var t1 = api.Tickets.CreateTicket(ticket);
-            Assert.That(t1.Audit.Events.First().Attachments.Count, Is.EqualTo(1));
+            Assert.Equal(t1.Audit.Events.First().Attachments.Count, 1);
 
-            Assert.That(api.Tickets.Delete(t1.Ticket.Id.Value), Is.True);
-            Assert.That(api.Attachments.DeleteUpload(res));
+            Assert.True(api.Tickets.Delete(t1.Ticket.Id.Value));
+            Assert.True(api.Attachments.DeleteUpload(res));
         }
 
-        [Test]
+        [Fact]
         public void CanGetCollaborators()
         {
             var res = api.Tickets.GetCollaborators(Settings.SampleTicketId);
-            Assert.Greater(res.Users.Count, 0);
+            Assert.True(res.Users.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetIncidents()
         {
             var t1 = api.Tickets.CreateTicket(new Ticket()
@@ -691,12 +692,12 @@ namespace Tests
             }).Ticket;
 
             var res = api.Tickets.GetIncidents(t1.Id.Value);
-            Assert.Greater(res.Tickets.Count, 0);
+            Assert.True(res.Tickets.Count > 0);
 
             Assert.True(api.Tickets.DeleteMultiple(new List<long>() { t1.Id.Value, t2.Id.Value }));
         }
 
-        [Test]
+        [Fact]
         public void CanGetProblems()
         {
             var t1 = api.Tickets.CreateTicket(new Ticket()
@@ -708,89 +709,89 @@ namespace Tests
             }).Ticket;
 
             var res = api.Tickets.GetProblems();
-            Assert.Greater(res.Tickets.Count, 0);
+            Assert.True(res.Tickets.Count > 0);
 
             Assert.True(api.Tickets.Delete(t1.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanGetInrementalTicketExportTestOnly()
         {
             var res = api.Tickets.__TestOnly__GetIncrementalTicketExport(DateTime.Now.AddDays(-1));
             Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetIncrementalTicketExportPaged()
         {
             const int maxTicketsPerPage = 1000;
 
             var res = api.Tickets.GetIncrementalTicketExport(DateTime.Now.AddDays(-365));
 
-            Assert.AreEqual(maxTicketsPerPage, res.Tickets.Count);
-            Assert.That(res.NextPage, Is.Not.Null.Or.Empty);
+            Assert.Equal(maxTicketsPerPage, res.Tickets.Count);
+            Assert.NotNull(res.NextPage);
         }
 
-        [Test]
+        [Fact]
         public void CanGetIncrementalTicketExportWithUsersSideLoadPaged()
         {
             const int maxTicketsPerPage = 1000;
 
             var res = api.Tickets.GetIncrementalTicketExport(DateTime.Now.AddDays(-365), TicketSideLoadOptionsEnum.Users);
 
-            Assert.AreEqual(maxTicketsPerPage, res.Tickets.Count);
-            Assert.IsTrue(res.Users.Count > 0);
-            Assert.That(res.NextPage, Is.Not.Null.Or.Empty);
+            Assert.Equal(maxTicketsPerPage, res.Tickets.Count);
+            Assert.True(res.Users.Count > 0);
+            Assert.NotNull(res.NextPage);
 
             res = this.api.Tickets.GetIncrementalTicketExportNextPage(res.NextPage);
 
-            Assert.IsTrue(res.Tickets.Count > 0);
-            Assert.IsTrue(res.Users.Count > 0);
+            Assert.True(res.Tickets.Count > 0);
+            Assert.True(res.Users.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetIncrementalTicketExportWithGroupsSideLoadPaged()
         {
             const int maxTicketsPerPage = 1000;
 
             var res = api.Tickets.GetIncrementalTicketExport(DateTime.Now.AddDays(-700), TicketSideLoadOptionsEnum.Groups);
 
-            Assert.AreEqual(maxTicketsPerPage, res.Tickets.Count);
-            Assert.IsTrue(res.Groups.Count > 0);
-            Assert.That(res.NextPage, Is.Not.Null.Or.Empty);
+            Assert.Equal(maxTicketsPerPage, res.Tickets.Count);
+            Assert.True(res.Groups.Count > 0);
+            Assert.NotNull(res.NextPage);
 
             res = this.api.Tickets.GetIncrementalTicketExportNextPage(res.NextPage);
 
-            Assert.IsTrue(res.Tickets.Count > 0);
-            Assert.IsTrue(res.Groups.Count > 0);
+            Assert.True(res.Tickets.Count > 0);
+            Assert.True(res.Groups.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketFields()
         {
             var res = api.Tickets.GetTicketFields();
             Assert.True(res.TicketFields.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketFieldById()
         {
             var id = Settings.CustomFieldId;
             var ticketField = api.Tickets.GetTicketFieldById(id).TicketField;
             Assert.NotNull(ticketField);
-            Assert.AreEqual(ticketField.Id, id);
+            Assert.Equal(ticketField.Id, id);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketFieldByIdAsync()
         {
             var id = Settings.CustomFieldId;
             var ticketField = api.Tickets.GetTicketFieldByIdAsync(id).Result.TicketField;
             Assert.NotNull(ticketField);
-            Assert.AreEqual(ticketField.Id, id);
+            Assert.Equal(ticketField.Id, id);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteTicketFields()
         {
             var tField = new TicketField()
@@ -806,12 +807,12 @@ namespace Tests
             updatedTF.Title = "My Custom Field";
 
             var updatedRes = api.Tickets.UpdateTicketField(updatedTF);
-            Assert.AreEqual(updatedRes.TicketField.Title, updatedTF.Title);
+            Assert.Equal(updatedRes.TicketField.Title, updatedTF.Title);
 
             Assert.True(api.Tickets.DeleteTicketField(updatedTF.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateAndDeleteTaggerTicketField()
         {
             var tField = new TicketField()
@@ -835,7 +836,7 @@ namespace Tests
             Assert.True(api.Tickets.DeleteTicketField(res.TicketField.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateOptionsAndDeleteTaggerTicketField()
         {
             // https://support.zendesk.com/hc/en-us/articles/204579973--BREAKING-Update-ticket-field-dropdown-fields-by-value-instead-of-id-
@@ -867,11 +868,11 @@ namespace Tests
             });
 
             var res = api.Tickets.CreateTicketField(tField);
-            Assert.That(res.TicketField, Is.Not.Null);
-            Assert.That(res.TicketField.Id, Is.Not.Null);
-            Assert.That(res.TicketField.CustomFieldOptions.Count, Is.EqualTo(2));
-            Assert.That(res.TicketField.CustomFieldOptions[0].Value, Is.EqualTo(option1));
-            Assert.That(res.TicketField.CustomFieldOptions[1].Value, Is.EqualTo(option2));
+            Assert.NotNull(res.TicketField);
+            Assert.NotNull(res.TicketField.Id);
+            Assert.Equal(res.TicketField.CustomFieldOptions.Count, 2);
+            Assert.Equal(res.TicketField.CustomFieldOptions[0].Value, option1);
+            Assert.Equal(res.TicketField.CustomFieldOptions[1].Value, option2);
 
             var id = res.TicketField.Id.Value;
 
@@ -897,34 +898,33 @@ namespace Tests
 
             var resU = api.Tickets.UpdateTicketField(tFieldU);
 
-            Assert.That(resU.TicketField.CustomFieldOptions.Count, Is.EqualTo(2));
-            Assert.That(resU.TicketField.CustomFieldOptions[0].Value, Is.EqualTo(option1_Update));
-            Assert.That(resU.TicketField.CustomFieldOptions[1].Value, Is.Not.EqualTo(option2));
+            Assert.Equal(resU.TicketField.CustomFieldOptions.Count, 2);
+            Assert.Equal(resU.TicketField.CustomFieldOptions[0].Value, option1_Update);
+            Assert.NotEqual(resU.TicketField.CustomFieldOptions[1].Value, option2);
 
             Assert.True(api.Tickets.DeleteTicketField(id));
         }
 
-        [Test]
-        [Ignore("Need to Create Suspended Ticket Working with Zendesk support Team")]
+        [Fact(Skip="Need to Create Suspended Ticket Working with Zendesk support Team")]
         public void CanGetSuspendedTickets()
         {
             var all = api.Tickets.GetSuspendedTickets();
-            Assert.Greater(all.Count, 0);
+            Assert.True(all.Count > 0);
 
             var ind = api.Tickets.GetSuspendedTicketById(all.SuspendedTickets[0].Id);
-            Assert.AreEqual(ind.SuspendedTicket.Id, all.SuspendedTickets[0].Id);
+            Assert.Equal(ind.SuspendedTicket.Id, all.SuspendedTickets[0].Id);
 
             //There is no way to suspend a ticket so I can run a tests for recovering and deleting them
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketForms()
         {
             var res = api.Tickets.GetTicketForms();
-            Assert.Greater(res.Count, 0);
+            Assert.True(res.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteTicketForms()
         {
             //api.Tickets.DeleteTicketForm(52523);
@@ -941,107 +941,107 @@ namespace Tests
             });
 
             Assert.NotNull(res);
-            Assert.Greater(res.TicketForm.Id, 0);
+            Assert.True(res.TicketForm.Id > 0);
 
             var get = api.Tickets.GetTicketFormById(res.TicketForm.Id.Value);
-            Assert.AreEqual(get.TicketForm.Id, res.TicketForm.Id);
+            Assert.Equal(get.TicketForm.Id, res.TicketForm.Id);
 
             res.TicketForm.Name = "Snowboard Fixed";
             res.TicketForm.DisplayName = "Snowboard has been fixed";
             res.TicketForm.Active = false;
 
             var update = api.Tickets.UpdateTicketForm(res.TicketForm);
-            Assert.AreEqual(update.TicketForm.Name, res.TicketForm.Name);
+            Assert.Equal(update.TicketForm.Name, res.TicketForm.Name);
 
             Assert.True(api.Tickets.DeleteTicketForm(res.TicketForm.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanReorderTicketForms()
         {
         }
 
-        [Test]
+        [Fact]
         public void CanCloneTicketForms()
         {
         }
 
-        [Test]
+        [Fact]
         public void CanGetAllTicketMetrics()
         {
             var metrics = api.Tickets.GetAllTicketMetrics();
             Assert.True(metrics.Count > 0);
             var count = 50;
             var nextPage = api.Tickets.GetByPageUrl<GroupTicketMetricResponse>(metrics.NextPage, count);
-            Assert.AreEqual(nextPage.TicketMetrics.Count, count);
+            Assert.Equal(nextPage.TicketMetrics.Count, count);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketMetricsAsync()
         {
             var tickets = api.Tickets.GetAllTicketMetricsAsync();
             Assert.True(tickets.Result.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketMetricByTicketId()
         {
             var id = Settings.SampleTicketId;
             var metric = api.Tickets.GetTicketMetricsForTicket(id).TicketMetric;
             Assert.NotNull(metric);
-            Assert.AreEqual(metric.TicketId, id);
+            Assert.Equal(metric.TicketId, id);
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketMetricByTicketIdAsync()
         {
             var id = Settings.SampleTicketId;
             var metric = api.Tickets.GetTicketMetricsForTicketAsync(id).Result.TicketMetric;
             Assert.NotNull(metric);
-            Assert.AreEqual(metric.TicketId, id);
+            Assert.Equal(metric.TicketId, id);
         }
 
-        [Test]
+        [Fact]
         public void CanGetAllTicketsWithSideLoad()
         {
             var tickets =
                 api.Tickets.GetAllTickets(sideLoadOptions: ticketSideLoadOptions);
 
-            Assert.IsTrue(tickets.Users.Any());
-            Assert.IsTrue(tickets.Organizations.Any());
+            Assert.True(tickets.Users.Any());
+            Assert.True(tickets.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanGetAllTicketsAsyncWithSideLoad()
         {
             var tickets =
                 api.Tickets.GetAllTicketsAsync(sideLoadOptions: ticketSideLoadOptions);
 
-            Assert.IsTrue(tickets.Result.Users.Any());
-            Assert.IsTrue(tickets.Result.Organizations.Any());
+            Assert.True(tickets.Result.Users.Any());
+            Assert.True(tickets.Result.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanGetTicketsByOrganizationIDAsyncWithSideLoad()
         {
             var id = Settings.OrganizationId;
             var tickets = api.Tickets.GetTicketsByOrganizationIDAsync(id, sideLoadOptions: ticketSideLoadOptions);
             Assert.True(tickets.Result.Count > 0);
-            Assert.IsTrue(tickets.Result.Users.Any());
-            Assert.IsTrue(tickets.Result.Organizations.Any());
+            Assert.True(tickets.Result.Users.Any());
+            Assert.True(tickets.Result.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanCanGetTicketsByOrganizationIDWithSideLoad()
         {
             var id = Settings.OrganizationId;
             var tickets = api.Tickets.GetTicketsByOrganizationID(id, sideLoadOptions: ticketSideLoadOptions);
             Assert.True(tickets.Count > 0);
-            Assert.IsTrue(tickets.Users.Any());
-            Assert.IsTrue(tickets.Organizations.Any());
+            Assert.True(tickets.Users.Any());
+            Assert.True(tickets.Organizations.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanImportTicket()
         {
             var ticket = new TicketImport()
@@ -1061,21 +1061,21 @@ namespace Tests
 
             Assert.NotNull(res);
             Assert.True(res.Id.HasValue);
-            Assert.Greater(res.Id.Value, 0);
-            Assert.Less(res.CreatedAt.Value.LocalDateTime, DateTime.Now.AddDays(-4));
-            Assert.Greater(res.UpdatedAt.Value.LocalDateTime, res.CreatedAt.Value.LocalDateTime);
-            Assert.AreEqual(res.Status, TicketStatus.Solved);
-            Assert.AreEqual(res.Description, "test description");
+            Assert.True(res.Id.Value > 0);
+            Assert.True(res.CreatedAt.Value.LocalDateTime < DateTime.Now.AddDays(-4));
+            Assert.True(res.UpdatedAt.Value.LocalDateTime > res.CreatedAt.Value.LocalDateTime);
+            Assert.Equal(res.Status, TicketStatus.Solved);
+            Assert.Equal(res.Description, "test description");
 
             var resComments = api.Tickets.GetTicketComments(res.Id.Value);
             Assert.NotNull(resComments);
-            Assert.AreEqual(resComments.Count, 3);
+            Assert.Equal(resComments.Count, 3);
 
             api.Tickets.DeleteAsync(res.Id.Value);
-            //Assert.Greater(res.SolvedAt.Value.LocalDateTime, res.UpdatedAt.Value.LocalDateTime);
+            //Assert.True(res.SolvedAt.Value.LocalDateTime > res.UpdatedAt.Value.LocalDateTime);
         }
 
-        [Test]
+        [Fact]
         public void CanImportTicketAsync()
         {
             var ticket = new TicketImport()
@@ -1094,20 +1094,20 @@ namespace Tests
             var res = api.Tickets.ImportTicketAsync(ticket);
 
             Assert.NotNull(res.Result);
-            Assert.Greater(res.Result.Ticket.Id.Value, 0);
-            Assert.Less(res.Result.Ticket.CreatedAt.Value.LocalDateTime, DateTime.Now.AddDays(-4));
-            Assert.Greater(res.Result.Ticket.UpdatedAt.Value.LocalDateTime, res.Result.Ticket.CreatedAt.Value.LocalDateTime);
-            Assert.AreEqual(res.Result.Ticket.Status, TicketStatus.Solved);
-            Assert.AreEqual(res.Result.Ticket.Description, "test description");
+            Assert.True(res.Result.Ticket.Id.Value > 0);
+            Assert.True(res.Result.Ticket.CreatedAt.Value.LocalDateTime < DateTime.Now.AddDays(-4));
+            Assert.True(res.Result.Ticket.UpdatedAt.Value.LocalDateTime > res.Result.Ticket.CreatedAt.Value.LocalDateTime);
+            Assert.Equal(res.Result.Ticket.Status, TicketStatus.Solved);
+            Assert.Equal(res.Result.Ticket.Description, "test description");
 
             var resComments = api.Tickets.GetTicketComments(res.Result.Ticket.Id.Value);
             Assert.NotNull(resComments);
-            Assert.AreEqual(resComments.Count, 3);
+            Assert.Equal(resComments.Count, 3);
 
             api.Tickets.DeleteAsync(res.Id);
         }
 
-        [Test]
+        [Fact]
         public void CanBulkImportTicket()
         {
             var test = new List<TicketImport>();
@@ -1131,10 +1131,10 @@ namespace Tests
 
             var res = api.Tickets.BulkImportTickets(test);
 
-            Assert.AreEqual(res.JobStatus.Status, "queued");
+            Assert.Equal(res.JobStatus.Status, "queued");
 
             var job = api.JobStatuses.GetJobStatus(res.JobStatus.Id);
-            Assert.AreEqual(job.JobStatus.Id, res.JobStatus.Id);
+            Assert.Equal(job.JobStatus.Id, res.JobStatus.Id);
 
             var count = 0;
             while (job.JobStatus.Status.ToLower() != "completed" && count < 10)
@@ -1144,26 +1144,26 @@ namespace Tests
                 count++;
             }
 
-            Assert.AreEqual(job.JobStatus.Status.ToLower(), "completed");
+            Assert.Equal(job.JobStatus.Status.ToLower(), "completed");
 
             foreach (var r in job.JobStatus.Results)
             {
                 var ticket = api.Tickets.GetTicket(r.Id).Ticket;
-                Assert.AreEqual(ticket.Description, "test description");
+                Assert.Equal(ticket.Description, "test description");
                 var resComments = api.Tickets.GetTicketComments(r.Id);
                 Assert.NotNull(resComments);
-                Assert.AreEqual(resComments.Count, 3);
+                Assert.Equal(resComments.Count, 3);
                 foreach (var c in resComments.Comments)
                 {
                     Assert.True(c.CreatedAt.HasValue);
-                    Assert.Less(c.CreatedAt.Value.LocalDateTime, DateTime.Now.AddDays(-1));
+                    Assert.True(c.CreatedAt.Value.LocalDateTime < DateTime.Now.AddDays(-1));
                 }
 
                 api.Tickets.DeleteAsync(r.Id);
             }
         }
 
-        [Test]
+        [Fact]
         public void CanCreateTicketWithPrivateComment()
         {
             var ticket = new Ticket { Comment = new Comment { Body = "This is a Test", Public = false } };
@@ -1178,10 +1178,10 @@ namespace Tests
             };
 
             var json = JsonConvert.SerializeObject(ticket, Formatting.None, jsonSettings);
-            Assert.That(json, Contains.Substring("false"));
+            Assert.True(json.Contains("false"));
         }
 
-        [Test]
+        [Fact]
         public async Task ViaChannel_Set_To_API_Isseue_254()
         {
             // see https://github.com/mozts2005/ZendeskApi_v2/issues/254
@@ -1205,20 +1205,20 @@ namespace Tests
             var resp = await api.Tickets.CreateTicketAsync(ticket);
             var newTicket = resp.Ticket;
 
-            Assert.That(newTicket.Via.Channel, Is.EqualTo("api"));
+            Assert.Equal(newTicket.Via.Channel, "api");
 
             var comment = new Comment { Body = "New comment", Public = true };
 
             var resp2 = await api.Tickets.UpdateTicketAsync(newTicket, comment);
             var resp3 = await api.Tickets.GetTicketCommentsAsync(newTicket.Id.Value);
 
-            Assert.That(resp3.Comments.Any(c => c.Via?.Channel != "api"), Is.False);
+            Assert.False(resp3.Comments.Any(c => c.Via?.Channel != "api"));
 
             // clean up
             await api.Tickets.DeleteAsync(newTicket.Id.Value);
         }
 
-        [Test]
+        [Fact]
         public async Task TicketField()
         {
             var tField = new TicketField
@@ -1243,12 +1243,12 @@ namespace Tests
             };
 
             var res = await api.Tickets.CreateTicketFieldAsync(tField);
-            Assert.That(res.TicketField, Is.Not.Null);
-            Assert.That(res.TicketField.Id, Is.Not.Null);
-            Assert.That(res.TicketField.CustomFieldOptions.Count, Is.EqualTo(2));
+            Assert.NotNull(res.TicketField);
+            Assert.NotNull(res.TicketField.Id);
+            Assert.Equal(res.TicketField.CustomFieldOptions.Count, 2);
         }
 
-        [Test]
+        [Fact]
         public async Task CanCreateUpdateOptionsAndDeleteTaggerTicketFieldAsync()
         {
             var option1 = "test_value_a";
@@ -1278,11 +1278,11 @@ namespace Tests
             });
 
             var res = await api.Tickets.CreateTicketFieldAsync(tField);
-            Assert.That(res.TicketField, Is.Not.Null);
-            Assert.That(res.TicketField.Id, Is.Not.Null);
-            Assert.That(res.TicketField.CustomFieldOptions.Count, Is.EqualTo(2));
-            Assert.That(res.TicketField.CustomFieldOptions[0].Value, Is.EqualTo(option1));
-            Assert.That(res.TicketField.CustomFieldOptions[1].Value, Is.EqualTo(option2));
+            Assert.NotNull(res.TicketField);
+            Assert.NotNull(res.TicketField.Id);
+            Assert.Equal(res.TicketField.CustomFieldOptions.Count, 2);
+            Assert.Equal(res.TicketField.CustomFieldOptions[0].Value, option1);
+            Assert.Equal(res.TicketField.CustomFieldOptions[1].Value, option2);
 
             var id = res.TicketField.Id.Value;
 
@@ -1308,14 +1308,14 @@ namespace Tests
 
             var resU = await api.Tickets.UpdateTicketFieldAsync(tFieldU);
 
-            Assert.That(resU.TicketField.CustomFieldOptions.Count, Is.EqualTo(2));
-            Assert.That(resU.TicketField.CustomFieldOptions[0].Value, Is.EqualTo(option1_Update));
-            Assert.That(resU.TicketField.CustomFieldOptions[1].Value, Is.Not.EqualTo(option2));
+            Assert.Equal(resU.TicketField.CustomFieldOptions.Count, 2);
+            Assert.Equal(resU.TicketField.CustomFieldOptions[0].Value, option1_Update);
+            Assert.NotEqual(resU.TicketField.CustomFieldOptions[1].Value, option2);
 
             Assert.True(await api.Tickets.DeleteTicketFieldAsync(id));
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetBrandId()
         {
             var brand = new Brand()
@@ -1333,14 +1333,14 @@ namespace Tests
             var respTicket = await api.Tickets.CreateTicketAsync(ticket);
             var respTikets = await api.Tickets.GetMultipleTicketsAsync(new List<long> { respTicket.Ticket.Id.Value });
 
-            Assert.That(respTikets.Tickets[0].BrandId, Is.EqualTo(brand.Id));
+            Assert.Equal(respTikets.Tickets[0].BrandId, brand.Id);
 
             // clean up
             Assert.True(api.Brands.DeleteBrand(brand.Id.Value));
             Assert.True(await api.Tickets.DeleteAsync(respTicket.Ticket.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetIsPublicAsync()
         {
             var ticket = new Ticket()
@@ -1351,26 +1351,26 @@ namespace Tests
             };
 
             var resp1 = await api.Tickets.CreateTicketAsync(ticket);
-            Assert.That(resp1.Ticket.IsPublic, Is.True);
+            Assert.True(resp1.Ticket.IsPublic);
 
             ticket.Comment.Public = false;
             var resp2 = await api.Tickets.CreateTicketAsync(ticket);
 
-            Assert.That(resp2.Ticket.IsPublic, Is.False);
+            Assert.False(resp2.Ticket.IsPublic);
 
-            Assert.That(await api.Tickets.DeleteAsync(resp1.Ticket.Id.Value), Is.True);
-            Assert.That(await api.Tickets.DeleteAsync(resp2.Ticket.Id.Value), Is.True);
+            Assert.True(await api.Tickets.DeleteAsync(resp1.Ticket.Id.Value));
+            Assert.True(await api.Tickets.DeleteAsync(resp2.Ticket.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public async Task CanGetSystemFieldOptions()
         {
             var resp = await api.Tickets.GetTicketFieldByIdAsync(21830872);
 
-            Assert.That(resp.TicketField.SystemFieldOptions, Is.Not.Null);
+            Assert.NotNull(resp.TicketField.SystemFieldOptions);
         }
 
-        [Test]
+        [Fact]
         public async Task CanSetFollowupID()
         {
             var ticket = new Ticket { Comment = new Comment { Body = "This is a Test", Public = false } };
@@ -1393,10 +1393,10 @@ namespace Tests
 
             var resp3 = await api.Tickets.CreateTicketAsync(ticket_Followup);
 
-            Assert.That(resp3.Ticket.Via.Source.Rel, Is.EqualTo("follow_up"));
+            Assert.Equal(resp3.Ticket.Via.Source.Rel, "follow_up");
 
-            Assert.That(await api.Tickets.DeleteAsync(resp3.Ticket.Id.Value), Is.True);
-            Assert.That(await api.Tickets.DeleteAsync(closedTicket.Id.Value), Is.True);
+            Assert.True(await api.Tickets.DeleteAsync(resp3.Ticket.Id.Value));
+            Assert.True(await api.Tickets.DeleteAsync(closedTicket.Id.Value));
         }
     }
 }

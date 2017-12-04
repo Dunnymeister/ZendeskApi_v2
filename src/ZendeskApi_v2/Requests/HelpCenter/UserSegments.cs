@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.UserSegments;
 
 namespace ZendeskApi_v2.Requests.HelpCenter
 {
     public interface IUserSegments : ICore
     {
-#if SYNC
        IndividualUserSegmentResponse GetUserSegment(int userSegmentId);
 
        GroupUserSegmentResponse GetUserSegments(int? perPage = null, int? page = null);
@@ -30,9 +27,7 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 
        bool DeleteUserSegment(int id);
 
-#endif
 
-#if ASYNC
         Task<IndividualUserSegmentResponse> GetUserSegmentAsync(int userSegmentId);
 
         Task<GroupUserSegmentResponse> GetUserSegmentsAsync(int? perPage = null, int? page = null);
@@ -51,7 +46,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 
         Task<bool> DeleteUserSegmentAsync(int id);
 
-#endif
     }
 
     public class UserSegments : Core, IUserSegments
@@ -61,7 +55,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
         }
 
-#if SYNC
         public IndividualUserSegmentResponse GetUserSegment(int userSegmentId)
         {
             return GenericGet<IndividualUserSegmentResponse>($"help_center/user_segments/{userSegmentId}.json");
@@ -115,8 +108,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
             return GenericDelete($"help_center/user_segments/{id}.json");
         }
-#endif
-#if ASYNC
         public async Task<IndividualUserSegmentResponse> GetUserSegmentAsync(int userSegmentId)
         {
             return await GenericGetAsync<IndividualUserSegmentResponse>($"help_center/user_segments/{userSegmentId}.json");
@@ -170,7 +161,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
             return await GenericDeleteAsync($"help_center/user_segments/{id}.json");
         }
-#endif
 
     }
 }

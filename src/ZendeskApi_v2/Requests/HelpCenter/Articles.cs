@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#if ASYNC
 
 using System.Threading.Tasks;
 
-#endif
 
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.Articles;
@@ -24,7 +22,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 
     public interface IArticles : ICore
     {
-#if SYNC
 
         IndividualArticleResponse GetArticle(long articleId, ArticleSideLoadOptionsEnum sideloadOptions = ArticleSideLoadOptionsEnum.None);
 
@@ -46,8 +43,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 
         bool DeleteArticle(long id);
 
-#endif
-#if ASYNC
 
         Task<IndividualArticleResponse> GetArticleAsync(long articleId, ArticleSideLoadOptionsEnum sideloadOptions = ArticleSideLoadOptionsEnum.None);
 
@@ -69,7 +64,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 
         Task<bool> DeleteArticleAsync(long id);
 
-#endif
     }
 
     public class Articles : Core, IArticles
@@ -85,7 +79,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
             }
         }
 
-#if SYNC
 
         public IndividualArticleResponse GetArticle(long articleId, ArticleSideLoadOptionsEnum sideloadOptions = ArticleSideLoadOptionsEnum.None)
         {
@@ -151,8 +144,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
             return GenericDelete($"help_center/articles/{id}.json");
         }
 
-#endif
-#if ASYNC
 
         public async Task<IndividualArticleResponse> GetArticleAsync(long articleId, ArticleSideLoadOptionsEnum sideloadOptions = ArticleSideLoadOptionsEnum.None)
         {
@@ -219,7 +210,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
             return await GenericDeleteAsync($"help_center/articles/{id}.json");
         }
 
-#endif
 
         private string GetFormattedArticlesUri(string resourceUrl, ArticleSortingOptions options, ArticleSideLoadOptionsEnum sideloadOptions)
         {

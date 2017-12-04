@@ -1,11 +1,12 @@
-﻿using NUnit.Framework;
+﻿
 using System.Linq;
+using Xunit;
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Targets;
 
 namespace Tests
 {
-    [TestFixture]
+
     public class TargetTests
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
@@ -24,7 +25,7 @@ namespace Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteTargets()
         {
             var target = new EmailTarget()
@@ -36,21 +37,21 @@ namespace Tests
             };
 
             var emailResult = (EmailTarget)api.Targets.CreateTarget(target).Target;
-            Assert.IsNotNull(emailResult);
-            Assert.IsInstanceOf<EmailTarget>(emailResult);
-            Assert.AreEqual("email_target", emailResult.Type);
-            Assert.AreEqual("test@test.com", emailResult.Email);
-            Assert.AreEqual("Test", emailResult.Subject);
+            Assert.NotNull(emailResult);
+            Assert.IsAssignableFrom<EmailTarget>(emailResult);
+            Assert.Equal("email_target", emailResult.Type);
+            Assert.Equal("test@test.com", emailResult.Email);
+            Assert.Equal("Test", emailResult.Subject);
 
             emailResult.Subject = "Test Update";
 
             var update = (EmailTarget)api.Targets.UpdateTarget(emailResult).Target;
-            Assert.AreEqual(emailResult.Subject, update.Subject);
+            Assert.Equal(emailResult.Subject, update.Subject);
 
             Assert.True(api.Targets.DeleteTarget(emailResult.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanRetrieveMultipleTargetTypes()
         {
             var emailTarget = new EmailTarget()
@@ -62,8 +63,8 @@ namespace Tests
             };
 
             var emailResult = (EmailTarget)api.Targets.CreateTarget(emailTarget).Target;
-            Assert.IsNotNull(emailResult);
-            Assert.IsInstanceOf<EmailTarget>(emailResult);
+            Assert.NotNull(emailResult);
+            Assert.IsAssignableFrom<EmailTarget>(emailResult);
 
             var jiraTarget = new JiraTarget()
             {
@@ -75,19 +76,19 @@ namespace Tests
             };
 
             var jiraResult = (JiraTarget)api.Targets.CreateTarget(jiraTarget).Target;
-            Assert.IsNotNull(jiraResult);
-            Assert.IsInstanceOf<JiraTarget>(jiraResult);
+            Assert.NotNull(jiraResult);
+            Assert.IsAssignableFrom<JiraTarget>(jiraResult);
 
             var targets = api.Targets.GetAllTargets();
             foreach (var target in targets.Targets)
             {
                 if(target.Id == emailResult.Id)
                 {
-                    Assert.IsInstanceOf<EmailTarget>(emailResult);
+                    Assert.IsAssignableFrom<EmailTarget>(emailResult);
                 }
                 else if (target.Id == jiraResult.Id)
                 {
-                    Assert.IsInstanceOf<JiraTarget>(jiraResult);
+                    Assert.IsAssignableFrom<JiraTarget>(jiraResult);
                 }
             }
 

@@ -1,14 +1,11 @@
 using System.Collections.Generic;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Tags;
 
 namespace ZendeskApi_v2.Requests
 {
 	public interface ITags : ICore
 	{
-#if SYNC
 		GroupTagResult GetTags();
 
 		/// <summary>
@@ -17,9 +14,7 @@ namespace ZendeskApi_v2.Requests
 		/// <param name="name"></param>
 		/// <returns></returns>
 		TagAutocompleteResponse AutocompleteTags(string name);
-#endif
 
-#if ASYNC
 		Task<GroupTagResult> GetTagsAsync();
 
 		/// <summary>
@@ -28,7 +23,6 @@ namespace ZendeskApi_v2.Requests
 		/// <param name="name"></param>
 		/// <returns></returns>
 		Task<TagAutocompleteResponse> AutocompleteTagsAsync(string name);
-#endif
 	}
 
 	public class Tags : Core, ITags
@@ -38,7 +32,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public GroupTagResult GetTags()
         {
             return GenericGet<GroupTagResult>("tags.json");
@@ -53,9 +46,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericPost<TagAutocompleteResponse>($"autocomplete/tags.json?name={name}");
         }
-#endif
 
-#if ASYNC
         public async Task<GroupTagResult> GetTagsAsync()
         {
             return await GenericGetAsync<GroupTagResult>("tags.json");
@@ -70,6 +61,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericPostAsync<TagAutocompleteResponse>($"autocomplete/tags.json?name={name}");
         }
-#endif
     }
 }

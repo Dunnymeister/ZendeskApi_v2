@@ -7,9 +7,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using Newtonsoft.Json;
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.Shared;
@@ -28,17 +26,13 @@ namespace ZendeskApi_v2
 
     public interface ICore
     {
-#if SYNC
         T GetByPageUrl<T>(string pageUrl, int perPage = 100);
         T RunRequest<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
         RequestResult RunRequest(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
-#endif
 
-#if ASYNC
         Task<T> GetByPageUrlAsync<T>(string pageUrl, int perPage = 100);
         Task<T> RunRequestAsync<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
         Task<RequestResult> RunRequestAsync(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
-#endif
     }
 
     public class Core : ICore
@@ -101,7 +95,6 @@ namespace ZendeskApi_v2
             OAuthToken = p_OAuthToken;
         }
 
-#if SYNC
         internal IWebProxy Proxy;
 
         public T GetByPageUrl<T>(string pageUrl, int perPage = 100)
@@ -326,7 +319,6 @@ namespace ZendeskApi_v2
             var res = RunRequest(resource, RequestMethod.Put, body);
             return res.HttpStatusCode == HttpStatusCode.OK;
         }
-#endif
 
         protected string GetPasswordOrTokenAuthHeader()
         {
@@ -359,7 +351,6 @@ namespace ZendeskApi_v2
             return $"Basic {auth}";
         }
 
-#if ASYNC
         public async Task<T> GetByPageUrlAsync<T>(string pageUrl, int perPage = 100)
         {
             if (string.IsNullOrEmpty(pageUrl))
@@ -576,7 +567,6 @@ namespace ZendeskApi_v2
             var res = RunRequestAsync(resource, RequestMethod.Put, body);
             return await res.ContinueWith(x => x.Result.HttpStatusCode == HttpStatusCode.OK);
         }
-#endif
 
         private WebException GetWebException(string resource, object body, WebException originalWebException)
         {

@@ -1,13 +1,10 @@
-﻿#if ASYNC
-using System.Threading.Tasks;
-#endif
+﻿using System.Threading.Tasks;
 using ZendeskApi_v2.Models.HelpCenter.Post;
 
 namespace ZendeskApi_v2.Requests.HelpCenter
 {
     public interface IPosts : ICore
     {
-#if SYNC
         GroupPostResponse GetPosts(int? perPage = null, int? page = null);
         GroupPostResponse GetPostsByTopicId(long topicId, int? perPage = null, int? page = null);
         GroupPostResponse GetPostsByUserId(long userId, int? perPage = null, int? page = null);
@@ -15,8 +12,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         IndividualPostResponse CreatePost(Post post);
         IndividualPostResponse UpdatePost(Post post);
         bool DeletePost(long PostId);
-#endif
-#if ASYNC
         Task<GroupPostResponse> GetPostsAsync(int? perPage = null, int? page = null);
         Task<GroupPostResponse> GetPostsByTopicIdAsync(long topicId, int? perPage = null, int? page = null);
         Task<GroupPostResponse> GetPostsByUserIdAsync(long userId, int? perPage = null, int? page = null);
@@ -24,7 +19,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         Task<IndividualPostResponse> CreatePostAsync(Post post);
         Task<IndividualPostResponse> UpdatePostAsync(Post post);
         Task<bool> DeletePostAsync(long PostId);
-#endif
     }
 
     public class Posts : Core, IPosts
@@ -33,7 +27,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
             : base(yourZendeskUrl, user, password, apiToken, p_OAuthToken)
         {
         }
-#if SYNC
         public GroupPostResponse GetPosts(int? perPage = null, int? page = null)
         {
             return GenericPagedGet<GroupPostResponse>("community/posts.json", perPage, page);
@@ -70,8 +63,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
             return GenericDelete($"community/posts/{postId}.json");
         }
-#endif
-#if ASYNC
         public async Task<IndividualPostResponse> CreatePostAsync(Post post)
         {
             var body = new { post };
@@ -108,6 +99,5 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
             return await GenericDeleteAsync($"community/posts/{postId}.json");
         }
-#endif
     }
 }

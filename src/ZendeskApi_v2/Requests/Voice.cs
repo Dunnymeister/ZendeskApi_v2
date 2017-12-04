@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Net;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Voice;
 
 namespace ZendeskApi_v2.Requests
 {
     public interface IVoice : ICore
     {
-#if SYNC
         bool OpenUserProfileInAgentBrowser(long agentId, long userId);
         bool OpenTicketInAgentBrowser(long agentId, long ticketId);
         GroupAgentActivityResponse GetVoiceAgentActivity();
         HistoricalQueueActivityDetails GetHistoricalQueueActivity();
 
-#endif
 
-#if ASYNC
         Task<bool> OpenUserProfileInAgentBrowserAsync(long agentId, long userId);
         Task<bool> OpenTicketInAgentBrowserAsync(long agentId, long ticketId);
         Task<GroupAgentActivityResponse> GetVoiceAgentActivityAsync();
         Task<HistoricalQueueActivity> GetHistoricalQueueActivityAsync();
-#endif
     }
 
     class Voice : Core, IVoice
@@ -40,7 +34,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public bool OpenUserProfileInAgentBrowser(long agentId, long userId)
         {
             return GenericBoolPost($"{channelsVoiceAgent}/{agentId}/{users}/{userId}/{display}.json");
@@ -61,9 +54,7 @@ namespace ZendeskApi_v2.Requests
             return GenericGet<HistoricalQueueActivity>(historicalQueueActivity + ".json").Details;
         }
 
-#endif
 
-#if ASYNC
         public async Task<bool> OpenUserProfileInAgentBrowserAsync(long agentId, long userId)
         {
             return await GenericBoolPostAsync($"{channelsVoiceAgent}/{agentId}/{users}/{userId}/{display}.json");
@@ -83,6 +74,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericGetAsync<HistoricalQueueActivity>(historicalQueueActivity + ".json");
         }
-#endif
     }
 }

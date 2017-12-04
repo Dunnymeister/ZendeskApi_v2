@@ -1,13 +1,10 @@
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Locales;
 
 namespace ZendeskApi_v2.Requests
 {
     public interface ILocales : ICore
     {
-#if SYNC
         /// <summary>
         /// This lists the translation locales that are available for the account.
         /// </summary>
@@ -31,9 +28,7 @@ namespace ZendeskApi_v2.Requests
         /// </summary>
         /// <returns></returns>
         IndividualLocaleResponse GetCurrentLocale(bool translation = false);
-#endif
 
-#if ASYNC
         /// <summary>
         /// This lists the translation locales that are available for the account.
         /// </summary>
@@ -57,7 +52,6 @@ namespace ZendeskApi_v2.Requests
         /// </summary>
         /// <returns></returns>
         Task<IndividualLocaleResponse> GetCurrentLocaleAsync(bool translation = false);
-#endif
     }
 
     public class Locales : Core, ILocales
@@ -68,7 +62,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         /// <summary>
         /// This lists the translation locales that are available for the account.
         /// </summary>
@@ -104,9 +97,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericGet<IndividualLocaleResponse>($"locales/current.json{(translation ? "?include=translations" : null)}");
         }
-#endif
 
-#if ASYNC
         /// <summary>
         /// This lists the translation locales that are available for the account.
         /// </summary>
@@ -142,6 +133,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericGetAsync<IndividualLocaleResponse>($"locales/current.json{(translation ? "?include=translations" : null)}");
         }
-#endif
     }
 }

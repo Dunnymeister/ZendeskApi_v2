@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.HelpCenter.Attachments;
 using ZendeskApi_v2.Models.Shared;
 
@@ -12,16 +10,12 @@ namespace ZendeskApi_v2.Requests.HelpCenter
 {
     public interface IArticleAttachments : ICore
     {
-#if SYNC
         GroupAttachmentResponse GetAttachments(long? articleId);
         ArticleAttachment UploadAttchment(long? articleId, ZenFile file, bool inline = false);
         bool DeleteAttchment(long? attchmentId);
-#endif
-#if ASYNC
         Task<GroupAttachmentResponse> GetAttachmentsAsync(long? articleId);
         Task<ArticleAttachment> UploadAttchmentAsync(long? articleId, ZenFile file, bool inline = false);
         Task<bool> DeleteAttchmentAsync(long? attchmentId);
-#endif
     }
 
     public class ArticleAttachments : Core, IArticleAttachments
@@ -31,7 +25,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
         }
 
-#if SYNC
         public GroupAttachmentResponse GetAttachments(long? articleId)
         {
             if (!articleId.HasValue)
@@ -59,8 +52,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
             return GenericDelete($"help_center/articles/attachments/{attchmentId}.json");
         }
-#endif
-#if ASYNC
         public Task<GroupAttachmentResponse> GetAttachmentsAsync(long? articleId)
         {
             if (!articleId.HasValue)
@@ -89,6 +80,5 @@ namespace ZendeskApi_v2.Requests.HelpCenter
             return GenericDeleteAsync($"help_center/articles/attachments/{attchmentId}.json");
         }
 
-#endif
     }
 }

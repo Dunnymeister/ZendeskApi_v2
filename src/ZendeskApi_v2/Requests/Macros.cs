@@ -1,13 +1,10 @@
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Macros;
 
 namespace ZendeskApi_v2.Requests
 {
 	public interface IMacros : ICore
 	{
-#if SYNC
 		/// <summary>
 		/// Lists all shared and personal macros available to the current user
 		/// </summary>
@@ -40,9 +37,7 @@ namespace ZendeskApi_v2.Requests
 		/// <param name="macroId"></param>
 		/// <returns></returns>
 		ApplyMacroResponse ApplyMacroToTicket(long ticketId, long macroId);
-#endif
 
-#if ASYNC
 		/// <summary>
 		/// Lists all shared and personal macros available to the current user
 		/// </summary>
@@ -75,7 +70,6 @@ namespace ZendeskApi_v2.Requests
 		/// <param name="macroId"></param>
 		/// <returns></returns>
 		Task<ApplyMacroResponse> ApplyMacroToTicketAsync(long ticketId, long macroId);
-#endif
 	}
 
 	public class Macros : Core, IMacros
@@ -85,7 +79,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         /// <summary>
         /// Lists all shared and personal macros available to the current user
         /// </summary>
@@ -146,9 +139,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericGet<ApplyMacroResponse>($"tickets/{ticketId}/macros/{macroId}/apply.json");
         }
-#endif
 
-#if ASYNC
         /// <summary>
         /// Lists all shared and personal macros available to the current user
         /// </summary>
@@ -209,6 +200,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericGetAsync<ApplyMacroResponse>($"tickets/{ticketId}/macros/{macroId}/apply.json");
         }                        
-#endif
     }
 }

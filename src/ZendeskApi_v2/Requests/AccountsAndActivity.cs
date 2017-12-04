@@ -1,6 +1,4 @@
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.AccountsAndActivities;
 
 
@@ -8,17 +6,13 @@ namespace ZendeskApi_v2.Requests
 {
 	public interface IAccountsAndActivity : ICore
 	{
-#if SYNC
 		SettingsResponse GetSettings();
 		GroupActivityResponse GetActivities();
 		IndividualActivityResponse GetActivityById(long activityId);
-#endif
 
-#if ASYNC
 		Task<SettingsResponse> GetSettingsAsync();
 		Task<GroupActivityResponse> GetActivitiesAync();
 		Task<IndividualActivityResponse> GetActivityByIdAync(long activityId);
-#endif
 	}
 
 	public class AccountsAndActivity : Core, IAccountsAndActivity
@@ -28,7 +22,6 @@ namespace ZendeskApi_v2.Requests
             : base(yourZendeskUrl, user, password, apiToken, p_OAuthToken)
         {
         }
-#if SYNC
         public SettingsResponse GetSettings()
         {
             return GenericGet<SettingsResponse>("account/settings.json");
@@ -43,9 +36,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericGet<IndividualActivityResponse>($"activities/{activityId}.json");
         }
-#endif
 
-#if ASYNC
         public async Task<SettingsResponse> GetSettingsAsync()
         {
             return await GenericGetAsync<SettingsResponse>("account/settings.json");
@@ -59,6 +50,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericGetAsync<IndividualActivityResponse>($"activities/{activityId}.json");
         }
-#endif
     }
 }

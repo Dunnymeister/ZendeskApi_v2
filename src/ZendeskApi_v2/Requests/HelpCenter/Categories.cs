@@ -1,29 +1,23 @@
 ﻿
 using ZendeskApi_v2.Models.HelpCenter.Categories;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using System;
 
 namespace ZendeskApi_v2.Requests.HelpCenter
 {
     public interface ICategories : ICore
     {
-#if SYNC
         GroupCategoryResponse GetCategories();
         IndividualCategoryResponse GetCategoryById(long id);
         IndividualCategoryResponse CreateCategory(Category category);
         IndividualCategoryResponse UpdateCategory(Category category);
         bool DeleteCategory(long id);
-#endif
 
-#if ASYNC
         Task<GroupCategoryResponse> GetCategoriesAsync();
         Task<IndividualCategoryResponse> GetCategoryByIdAsync(long id);
         Task<IndividualCategoryResponse> CreateCategoryAsync(Category category);
         Task<IndividualCategoryResponse> UpdateCategoryAsync(Category category);
         Task<bool> DeleteCategoryAsync(long id);
-#endif
     }
 
     public class Categories : Core, ICategories
@@ -36,7 +30,6 @@ namespace ZendeskApi_v2.Requests.HelpCenter
             Locale = locale;
         }
 
-#if SYNC
         public GroupCategoryResponse GetCategories()
         {
             return GenericGet<GroupCategoryResponse>("help_center/categories.json");
@@ -69,9 +62,7 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
             return GenericDelete($"help_center/categories/{id}.json");
         }
-#endif
 
-#if ASYNC
         public async Task<GroupCategoryResponse> GetCategoriesAsync()
         {
             return await GenericGetAsync<GroupCategoryResponse>("help_center/categories.json");
@@ -98,6 +89,5 @@ namespace ZendeskApi_v2.Requests.HelpCenter
         {
             return await GenericDeleteAsync($"help_center/categories/{id}.json");
         }
-#endif
     }
 }

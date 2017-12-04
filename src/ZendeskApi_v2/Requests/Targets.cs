@@ -1,28 +1,22 @@
 ﻿using System.Collections.Generic;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Targets;
 
 namespace ZendeskApi_v2.Requests
 {
     public interface ITargets : ICore
     {
-#if SYNC
         GroupTargetResponse GetAllTargets();
         IndividualTargetResponse GetTarget(long id);
         IndividualTargetResponse CreateTarget(BaseTarget target);
         IndividualTargetResponse UpdateTarget(BaseTarget target);
         bool DeleteTarget(long id);
-#endif
 
-#if ASYNC
         Task<GroupTargetResponse> GetAllTargetsAsync();
         Task<IndividualTargetResponse> GetTargetAsync(long id);
         Task<IndividualTargetResponse> CreateTargetAsync(BaseTarget target);
         Task<IndividualTargetResponse> UpdateTargetAsync(BaseTarget target);
         Task<bool> DeleteTargetAsync(long id);
-#endif
     }
     public class Targets : Core, ITargets
     {
@@ -31,7 +25,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public GroupTargetResponse GetAllTargets()
         {
             return GenericGet<GroupTargetResponse>("targets.json");
@@ -58,9 +51,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericDelete($"targets/{id}.json");
         }
-#endif
 
-#if ASYNC
         public async Task<GroupTargetResponse> GetAllTargetsAsync()
         {
             return await GenericGetAsync<GroupTargetResponse>("targets.json");
@@ -87,6 +78,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericDeleteAsync($"targets/{id}.json");
         }
-#endif
     }
 }

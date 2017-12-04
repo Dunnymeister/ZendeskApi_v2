@@ -4,9 +4,7 @@ using System.Linq;
 using ZendeskApi_v2.Models;
 using ZendeskApi_v2.Models.Groups;
 using ZendeskApi_v2.Models.Organizations;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Search;
 using ZendeskApi_v2.Models.Tickets;
 using ZendeskApi_v2.Models.Users;
@@ -15,7 +13,6 @@ namespace ZendeskApi_v2.Requests
 {
     public interface ISearch : ICore
     {
-#if SYNC
         /// <summary>
         /// 
         /// </summary>
@@ -55,9 +52,7 @@ namespace ZendeskApi_v2.Requests
         /// <param name="sortOrder">Possible values are 'relevance', 'asc', 'desc'. Defaults to 'relevance' when no 'order' criteria is requested.</param>
         /// <returns></returns>
         SearchResults<T> AnonymousSearchFor<T>(string searchTerm, string sortBy = "", string sortOrder = "", int page = 1, int? perPage = null) where T : ISearchable;
-#endif
 
-#if ASYNC
         /// <summary>
         /// 
         /// </summary>
@@ -97,7 +92,6 @@ namespace ZendeskApi_v2.Requests
         /// <param name="sortOrder">Possible values are 'relevance', 'asc', 'desc'. Defaults to 'relevance' when no 'order' criteria is requested.</param>
         /// <returns></returns>
         Task<SearchResults<T>> AnonymousSearchForAsync<T>(string searchTerm, string sortBy = "", string sortOrder = "", int page = 1, int? perPage = null) where T : ISearchable;
-#endif
     }
 
     /// <summary>
@@ -111,7 +105,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         /// <summary>
         /// 
         /// </summary>
@@ -171,9 +164,7 @@ namespace ZendeskApi_v2.Requests
 
             return GenericPagedSortedGet<SearchResults<T>>(resource, perPage, page, sortBy, SortOrderAscending(sortOrder));
         }
-#endif
 
-#if ASYNC
         /// <summary>
         /// 
         /// </summary>
@@ -233,7 +224,6 @@ namespace ZendeskApi_v2.Requests
 
             return await GenericPagedSortedGetAsync<SearchResults<T>>(resource, perPage, page, sortBy, SortOrderAscending(sortOrder));
         }
-#endif
 
         public string AddTypeToSearchTerm<T>(string searchTerm = "")
         {

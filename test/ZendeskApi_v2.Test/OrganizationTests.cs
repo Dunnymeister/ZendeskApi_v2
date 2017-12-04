@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+
 using ZendeskApi_v2;
 using ZendeskApi_v2.Models.Organizations;
 using ZendeskApi_v2.Models.Tags;
 using ZendeskApi_v2.Models.Users;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Tests
 {
-    [TestFixture]
+
     public class OrganizationTests
     {
         ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
@@ -37,7 +38,7 @@ namespace Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanAddAndRemoveTagsFromOrganization()
         {
             var tag = new Tag();
@@ -54,27 +55,27 @@ namespace Tests
             api.Organizations.UpdateOrganization(org2.Organization);
         }
 
-        [Test]
+        [Fact]
         public void CanGetOrganizations()
         {
             var res = api.Organizations.GetOrganizations();
-            Assert.Greater(res.Count, 0);
+            Assert.True(res.Count > 0);
 
             var org = api.Organizations.GetOrganization(res.Organizations[0].Id.Value);
-            Assert.AreEqual(org.Organization.Id, res.Organizations[0].Id);
+            Assert.Equal(org.Organization.Id, res.Organizations[0].Id);
         }
 
-        [Test]
+        [Fact]
         public void CanSearchForOrganizations()
         {
             var res = api.Organizations.GetOrganizationsStartingWith(Settings.DefaultOrg.Substring(0, 3));
-            Assert.Greater(res.Count, 0);
+            Assert.True(res.Count > 0);
 
             var search = api.Organizations.SearchForOrganizationsByExternalId(Settings.DefaultExternalId);
-            Assert.Greater(search.Count, 0);
+            Assert.True(search.Count > 0);
         }
 
-        [Test]
+        [Fact]
         public void CanGetMultipleOrganizations()
         {
             var org = api.Organizations.CreateOrganization(new Organization()
@@ -82,7 +83,7 @@ namespace Tests
                 Name = "Test Org"
             });
 
-            Assert.Greater(org.Organization.Id, 0);
+            Assert.True(org.Organization.Id > 0);
 
             var org2 = api.Organizations.CreateOrganization(new Organization()
             {
@@ -90,10 +91,10 @@ namespace Tests
             });
 
             var orgs = api.Organizations.GetMultipleOrganizations(new[] { org.Organization.Id.Value, org2.Organization.Id.Value });
-            Assert.AreEqual(orgs.Organizations.Count, 2);
+            Assert.Equal(orgs.Organizations.Count, 2);
         }
 
-        [Test]
+        [Fact]
         public void CanCreateUpdateAndDeleteOrganizations()
         {
             var res = api.Organizations.CreateOrganization(new Organization()
@@ -101,16 +102,16 @@ namespace Tests
                 Name = "Test Org"
             });
 
-            Assert.Greater(res.Organization.Id, 0);
+            Assert.True(res.Organization.Id > 0);
 
             res.Organization.Notes = "Here is a sample note";
             var update = api.Organizations.UpdateOrganization(res.Organization);
-            Assert.AreEqual(update.Organization.Notes, res.Organization.Notes);
+            Assert.Equal(update.Organization.Notes, res.Organization.Notes);
 
             Assert.True(api.Organizations.DeleteOrganization(res.Organization.Id.Value));
         }
 
-        [Test]
+        [Fact]
         public void CanCreateAndDeleteOrganizationMemberships()
         {
             var org = api.Organizations.CreateOrganization(new Organization()
@@ -125,22 +126,19 @@ namespace Tests
                 Role = "end-user"
             };
 
-
             var res = api.Users.CreateUser(user);
 
             var org_membership = new OrganizationMembership() { UserId = res.User.Id, OrganizationId = org.Organization.Id };
 
             var res2 = api.Organizations.CreateOrganizationMembership(org_membership);
 
-            Assert.Greater(res2.OrganizationMembership.Id, 0);
+            Assert.True(res2.OrganizationMembership.Id > 0);
             Assert.True(api.Organizations.DeleteOrganizationMembership(res2.OrganizationMembership.Id.Value));
             Assert.True(api.Users.DeleteUser(res.User.Id.Value));
             Assert.True(api.Organizations.DeleteOrganization(org.Organization.Id.Value));
         }
 
-
-        [Test]
-        [Ignore("Support ticket opend will update when I(Elizabeth) have a fix ")]
+        [Fact(Skip="Support ticket opend will update when I(Elizabeth) have a fix ")]
         public void CanCreateManyAndDeleteOrganizationMemberships()
         {
             var org = api.Organizations.CreateOrganization(new Organization()
@@ -148,14 +146,14 @@ namespace Tests
                 Name = "Test Org"
             });
 
-            Assert.Greater(org.Organization.Id, 0);
+            Assert.True(org.Organization.Id > 0);
 
             var org2 = api.Organizations.CreateOrganization(new Organization()
             {
                 Name = "Test Org2"
             });
 
-            Assert.Greater(org2.Organization.Id, 0);
+            Assert.True(org2.Organization.Id > 0);
 
             var res = api.Users.CreateUser(new User()
             {
@@ -164,7 +162,7 @@ namespace Tests
                 Role = "end-user"
             });
 
-            Assert.Greater(res.User.Id, 0);
+            Assert.True(res.User.Id > 0);
 
             var memberships = new List<OrganizationMembership>();
             memberships.Add(new OrganizationMembership() { UserId = res.User.Id, OrganizationId = org.Organization.Id });
@@ -182,7 +180,7 @@ namespace Tests
                 retries++;
             }
 
-            Assert.Greater(job.Results.Count(), 0);
+            Assert.True(job.Results.Count() > 0);
 
             Assert.True(api.Organizations.DeleteOrganizationMembership(job.Results[0].Id));
             Assert.True(api.Organizations.DeleteOrganizationMembership(job.Results[1].Id));
@@ -192,12 +190,11 @@ namespace Tests
             Assert.True(api.Organizations.DeleteOrganization(org2.Organization.Id.Value));
         }
 
-
-        [Test]
+        [Fact]
         public async Task CanSearchForOrganizationsAsync()
         {
             var search = await api.Organizations.SearchForOrganizationsAsync(Settings.DefaultExternalId);
-            Assert.Greater(search.Count, 0);
+            Assert.True(search.Count > 0);
         }
     }
 }

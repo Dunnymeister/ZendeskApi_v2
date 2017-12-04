@@ -1,13 +1,10 @@
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Satisfaction;
 
 namespace ZendeskApi_v2.Requests
 {
 	public interface ISatisfactionRatings : ICore
 	{
-#if SYNC
 		/// <summary>
 		/// Lists all received satisfaction rating requests ever issued for your account. To only list the satisfaction ratings submitted by your customers, use the "received" end point below instead.
 		/// </summary>
@@ -21,9 +18,7 @@ namespace ZendeskApi_v2.Requests
 		GroupSatisfactionResponse GetReceivedSatisfactionRatings();
 
 		IndividualSatisfactionResponse GetSatisfactionRatingById(long id);
-#endif
 
-#if ASYNC
 		/// <summary>
 		/// Lists all received satisfaction rating requests ever issued for your account. To only list the satisfaction ratings submitted by your customers, use the "received" end point below instead.
 		/// </summary>
@@ -37,7 +32,6 @@ namespace ZendeskApi_v2.Requests
 		Task<GroupSatisfactionResponse> GetReceivedSatisfactionRatingsAsync();
 
 		Task<IndividualSatisfactionResponse> GetSatisfactionRatingByIdAsync(long id);
-#endif
 	}
 
 	public class SatisfactionRatings : Core, ISatisfactionRatings
@@ -47,7 +41,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         /// <summary>
         /// Lists all received satisfaction rating requests ever issued for your account. To only list the satisfaction ratings submitted by your customers, use the "received" end point below instead.
         /// </summary>
@@ -70,9 +63,7 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericGet<IndividualSatisfactionResponse>($"satisfaction_ratings/{id}.json");
         }
-#endif
 
-#if ASYNC
         /// <summary>
         /// Lists all received satisfaction rating requests ever issued for your account. To only list the satisfaction ratings submitted by your customers, use the "received" end point below instead.
         /// </summary>
@@ -95,6 +86,5 @@ namespace ZendeskApi_v2.Requests
         {
             return await GenericGetAsync<IndividualSatisfactionResponse>($"satisfaction_ratings/{id}.json");
         }
-#endif
     }
 }

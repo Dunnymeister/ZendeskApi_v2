@@ -1,7 +1,5 @@
 using System;
-#if ASYNC
 using System.Threading.Tasks;
-#endif
 using ZendeskApi_v2.Models.Requests;
 using ZendeskApi_v2.Models.Tickets;
 
@@ -9,7 +7,6 @@ namespace ZendeskApi_v2.Requests
 {
     public interface IRequests : ICore
     {
-#if SYNC
         /// <summary>
         /// Gets all requests available to user.
         /// </summary>
@@ -57,9 +54,7 @@ namespace ZendeskApi_v2.Requests
         IndividualRequestResponse CreateRequest(Request request);
         IndividualRequestResponse UpdateRequest(long id, Comment comment);
         IndividualRequestResponse UpdateRequest(Request request, Comment comment = null);
-#endif
 
-#if ASYNC
         /// <summary>
         /// Gets all requests available to user.
         /// </summary>
@@ -106,7 +101,6 @@ namespace ZendeskApi_v2.Requests
         Task<IndividualCommentResponse> GetSpecificRequestCommentAsync(long requestId, long commentId);
         Task<IndividualRequestResponse> CreateRequestAsync(Request request);
         Task<IndividualRequestResponse> UpdateRequestAsync(long id, Comment comment);
-#endif
     }
 
     public class Requests : Core, IRequests
@@ -116,7 +110,6 @@ namespace ZendeskApi_v2.Requests
         {
         }
 
-#if SYNC
         public GroupRequestResponse GetAllRequests(int? perPage = null, int? page = null, string sortCol = null, bool? sortAscending = null)
         {
             return GenericPagedSortedGet<GroupRequestResponse>("requests.json", perPage, page, sortCol, sortAscending);
@@ -187,9 +180,7 @@ namespace ZendeskApi_v2.Requests
             
             return GenericPut<IndividualRequestResponse>($"requests/{request.Id.Value}.json", body);
         }
-#endif
 
-#if ASYNC
         public async Task<GroupRequestResponse> GetAllRequestsAsync(int? perPage = null, int? page = null, string sortCol = null, bool? sortAscending = null)
         {
             return await GenericPagedSortedGetAsync<GroupRequestResponse>("requests.json", perPage, page, sortCol, sortAscending);
@@ -241,6 +232,5 @@ namespace ZendeskApi_v2.Requests
             var body = new { request = new { comment} };
             return await GenericPutAsync<IndividualRequestResponse>($"requests/{id}.json", body);
         }
-#endif
     }
 }
