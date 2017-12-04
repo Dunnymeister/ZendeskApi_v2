@@ -19,7 +19,7 @@ namespace Tests.HelpCenter
     {
         private ZendeskApi api = new ZendeskApi(Settings.Site, Settings.AdminEmail, Settings.AdminPassword);
         private long _articleIdWithComments = 204838115; //https://csharpapi.zendesk.com/hc/en-us/articles/204838115-Thing-4?page=1#comment_200486479
-
+        private long _categoryWithSideloadedSectionsId = 200382245;
         [Fact]
         public void CanGetSingleArticle()
         {
@@ -96,9 +96,7 @@ namespace Tests.HelpCenter
         [Fact]
         public void CanGetArticleByCategoryWithSideloadedSections()
         {
-            var firstCategory = api.HelpCenter.Categories.GetCategories().Categories[0];
-            var res = api.HelpCenter.Articles.GetArticlesByCategoryId(firstCategory.Id.Value, ArticleSideLoadOptionsEnum.Sections);
-
+            var res = api.HelpCenter.Articles.GetArticlesByCategoryId(_categoryWithSideloadedSectionsId, ArticleSideLoadOptionsEnum.Sections);
             Assert.True(res.Sections.Count > 0);
         }
 
@@ -130,10 +128,10 @@ namespace Tests.HelpCenter
         [Fact]
         public void CanGetArticlesSortedInACategory()
         {
-            var category = api.HelpCenter.Categories.GetCategories().Categories[0];
-            var articlesAscending = api.HelpCenter.Articles.GetArticlesByCategoryId(category.Id.Value, ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title });
-            var articlesDescending = api.HelpCenter.Articles.GetArticlesByCategoryId(category.Id.Value, ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title, SortOrder = ArticleSortOrderEnum.Desc });
+            var articlesAscending = api.HelpCenter.Articles.GetArticlesByCategoryId(_categoryWithSideloadedSectionsId, ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title });
+            var articlesDescending = api.HelpCenter.Articles.GetArticlesByCategoryId(_categoryWithSideloadedSectionsId, ArticleSideLoadOptionsEnum.None, new ArticleSortingOptions() { SortBy = ArticleSortEnum.Title, SortOrder = ArticleSortOrderEnum.Desc });
 
+            // Poor choice of test - should verify that the lists are in reverse order and not that the titles aren't equal
             Assert.True(articlesAscending.Articles[0].Title != articlesDescending.Articles[0].Title);
         }
 
